@@ -1,0 +1,78 @@
+import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meta/meta.dart';
+import 'package:movie/data/models/user_model.dart';
+
+part 'auth_bloc_event.dart';
+part 'auth_bloc_state.dart';
+
+class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  AuthBlocBloc() : super(AuthBlocInitial()) {
+    on<CheckLoginStatusEvent>((event, emit) async {
+      User? user;
+      try {
+        await Future.delayed(Duration(seconds: 3), () {
+          user = _auth.currentUser;
+        });
+        if (user != null) {
+          emit(Authenticated(user));
+        } else {
+          emit(UnAutheticated());
+        }
+      } catch (e) {
+        emit(AutheticatedError(msg: e.toString()));
+      }
+    });
+
+    on<LoingEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final UserCredential = await _auth.signInWithEmailAndPassword(
+            email: event.email, password: event.password);
+        final user = UserCredential.user;
+        if (user != null) {
+          emit(Authenticated(user));
+        } else {
+          emit(UnAutheticated());
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    });
+
+    on<SingupEvnet>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final UserCredential = await _auth.createUserWithEmailAndPassword(
+            email: event.user!.email.toString(),
+            password: event.user.password.toString());
+
+        final user = UserCredential.user;
+
+        if (user != null) {
+          FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'uid': user.uid,
+            'email': user.email,
+            'name': event.user.name,
+            'userid': event.user.userid,
+            'createdAt': DateTime.now()
+          });
+          emit(Authenticated(user));
+        } else {
+          emit(UnAutheticated());
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    });
+
+    on<LogoutEvent>((evnet, emit) async {
+      try {
+        await _auth.signOut();
+        emit(UnAutheticated());
+      } catch (e) {}
+    });
+  }
+}
