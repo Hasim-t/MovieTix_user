@@ -15,7 +15,7 @@ class Splash extends StatelessWidget {
         if (state is Authenticated) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) {
-            return const ProfilScreen();
+            return  ProfilScreen();
           }));
         } else if (state is UnAutheticated) {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

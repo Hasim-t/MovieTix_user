@@ -8,10 +8,10 @@ import 'package:movie/presentation/widgets/textfromwidget.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
-  TextEditingController _namecontroller = TextEditingController();
-  TextEditingController _emailnamecontroller = TextEditingController();
-  TextEditingController _Passwordcontroller = TextEditingController();
-  TextEditingController _usernamecontroller = TextEditingController();
+ final  TextEditingController _namecontroller = TextEditingController();
+ final TextEditingController _emailnamecontroller = TextEditingController();
+ final TextEditingController _passwordcontroller = TextEditingController();
+ final TextEditingController _usernamecontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class RegisterPage extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: MyColor().darkblue,
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: MyColor().primarycolor),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -48,7 +48,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: screenheight * 0.029,
+                      height: screenheight * 0.1,
                     ),
                     Text(
                       'Create an Account',
@@ -57,36 +57,40 @@ class RegisterPage extends StatelessWidget {
                           fontFamily: 'Cabin',
                           fontSize: 24),
                     ),
+                   const SizedBox(
+                      height: 15,
+                    ),
+                    CustomTextFormField(
+                        prefixIcon: Icon(Icons.person),
+                        controller: _namecontroller,
+                        hintText: "Full Name"),
                     const SizedBox(
+                      height: 30,
+                    ),
+                    CustomTextFormField(
+                        prefixIcon: const Icon(Icons.email),
+                        controller: _emailnamecontroller,
+                        hintText: " Email"),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    CustomTextFormField(
+                        prefixIcon: Icon(Icons.alternate_email_rounded),
+                        controller: _usernamecontroller,
+                        hintText: "Username"),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    CustomTextFormField(
+                        prefixIcon: Icon(Icons.lock),
+                        controller: _passwordcontroller,
+                        hintText: "Password"),
+                  const    SizedBox(
                       height: 50,
                     ),
-                    CustomTextFormField(
-                        controller: _namecontroller,
-                        hintText: "Enter full name"),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    CustomTextFormField(
-                        controller: _emailnamecontroller,
-                        hintText: "Enter  email"),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    CustomTextFormField(
-                        controller: _usernamecontroller,
-                        hintText: "Enter username"),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    CustomTextFormField(
-                        controller: _Passwordcontroller,
-                        hintText: "ented password"),
-                    SizedBox(
-                      height: 30,
-                    ),
                     Container(
-                      width: screenwidth * 0.4,
-                      height: screenheight * 0.05,
+                      width: screenwidth * 0.9,
+                      height: screenheight * 0.06,
                       decoration: BoxDecoration(
                         color: MyColor().primarycolor,
                         borderRadius: BorderRadius.circular(12),
@@ -97,31 +101,39 @@ class RegisterPage extends StatelessWidget {
                           UserModel user = UserModel(
                               name: _namecontroller.text,
                               email: _emailnamecontroller.text,
-                              password: _Passwordcontroller.text,
+                              password: _passwordcontroller.text,
                               userid: _usernamecontroller.text);
                           authbloc.add(SingupEvnet(user: user));
                         },
-                        child: Text(
-                          'Login',
+                        child: const Text(
+                          'Register',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 22),
                         ),
                       )),
                     ),
-                    SizedBox(
-                      height: 20,
+                    const SizedBox(
+                      height: 50,
                     ),
-                    InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          '  alredy have an accound ',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                       const Text(
+                          ' Already have an account? ',
                           style: TextStyle(color: Colors.white),
-                        )),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Login Here", style: TextStyle(
+                              color:  MyColor().primarycolor
+                            ),))
+                      ],
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

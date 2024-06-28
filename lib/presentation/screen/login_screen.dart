@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
-import 'package:movie/data/repositories/auth_serviece.dart';
+
 
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/profil_screen.dart';
@@ -137,7 +137,7 @@ class LoginScreen extends StatelessWidget {
     ),
     InkWell(
      onTap: () {
-    context.read<AuthBlocBloc>().add(GoogleSignInEvent());
+     context.read<AuthBlocBloc>().add(GoogleSignInEvent());
   },
       child: Container(
        

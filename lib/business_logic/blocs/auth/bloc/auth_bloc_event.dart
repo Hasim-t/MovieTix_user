@@ -25,3 +25,8 @@ class SingupEvnet extends AuthBlocEvent {
   
  }
  class GoogleSignInEvent extends AuthBlocEvent {}
+
+
+ class EmailLogoutEvent extends AuthBlocEvent {}
+
+class GoogleLogoutEvent extends AuthBlocEvent {}

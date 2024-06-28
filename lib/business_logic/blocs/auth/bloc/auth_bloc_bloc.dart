@@ -28,21 +28,7 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
       }
     });
 
-    on<LoingEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final UserCredential = await _auth.signInWithEmailAndPassword(
-            email: event.email, password: event.password);
-        final user = UserCredential.user;
-        if (user != null) {
-          emit(Authenticated(user));
-        } else {
-          emit(UnAutheticated());
-        }
-      } catch (e) {
-        print(e.toString());
-      }
-    });
+   
 
     on<SingupEvnet>((event, emit) async {
       emit(AuthLoading());
@@ -70,39 +56,89 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
       }
     });
 
-    on<LogoutEvent>((evnet, emit) async {
-      try {
-        await _auth.signOut();
-        emit(UnAutheticated());
-      } catch (e) {}
-    });
-    on<GoogleSignInEvent>((event, emit) async {
+   on<LoingEvent>((event, emit) async {
       emit(AuthLoading());
       try {
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) {
-          emit(UnAutheticated());
-          return;
-        }
-
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        final UserCredential userCredential = await _auth.signInWithCredential(credential);
-        final user = userCredential.user;
-
+        final UserCredential = await _auth.signInWithEmailAndPassword(
+            email: event.email, password: event.password);
+        final user = UserCredential.user;
         if (user != null) {
-          // You might want to store additional user info in Firestore here
           emit(Authenticated(user));
         } else {
           emit(UnAutheticated());
         }
       } catch (e) {
+        print(e.toString());
+      }
+    });
+
+   on<LogoutEvent>((event, emit) async {
+  try {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
+    emit(UnAutheticated());
+  } catch (e) {
+    emit(AutheticatedError(msg: e.toString()));
+  }
+});
+   on<GoogleSignInEvent>((event, emit) async {
+  emit(AuthLoading());
+  try {
+    // Force account selection
+    await _googleSignIn.signOut();
+    
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      emit(UnAutheticated());
+      return;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential = await _auth.signInWithCredential(credential);
+    final user = userCredential.user;
+
+    if (user != null) {
+      // Optional: Save user info to Firestore if needed
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'email': user.email,
+        'name': user.displayName,
+        'createdAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      emit(Authenticated(user));
+    } else {
+      emit(UnAutheticated());
+    }
+  } catch (e) {
+    print('Google Sign In Error: $e');
+    emit(AutheticatedError(msg: e.toString()));
+  }
+});
+   
+   on<EmailLogoutEvent>((event, emit) async {
+      try {
+        await _auth.signOut();
+        emit(UnAutheticated());
+      } catch (e) {
         emit(AutheticatedError(msg: e.toString()));
       }
     });
+
+    on<GoogleLogoutEvent>((event, emit) async {
+      try {
+        await _auth.signOut();
+        await _googleSignIn.signOut();
+        emit(UnAutheticated());
+      } catch (e) {
+        emit(AutheticatedError(msg: e.toString()));
+      }
+    });
+
   }
 }
