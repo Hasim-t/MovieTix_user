@@ -48,14 +48,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return TextFormField(
 
       readOnly: widget.readOnly,
-      style:Theme.of(context).textTheme.bodySmall ,
+      style:widget.style ?? Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white) ,
       maxLines: widget.maxlines,
       keyboardType: widget.type,
       controller: widget.controller,
       decoration: InputDecoration(
-        
-        errorStyle: TextStyle(color: Colors.red),
-        hintStyle: TextStyle(color: Colors.grey),
+        contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+        errorStyle: const TextStyle(color: Colors.red),
+        hintStyle: const TextStyle(color: Colors.grey),
         hintText: widget.hintText,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -63,7 +63,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white)
+          borderSide: const BorderSide(color: Colors.white)
         ),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.obscureText ? IconButton(

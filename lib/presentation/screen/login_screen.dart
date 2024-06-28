@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
+import 'package:movie/data/repositories/auth_serviece.dart';
 
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/profil_screen.dart';
 import 'package:movie/presentation/screen/register.dart';
 import 'package:movie/presentation/widgets/textfromwidget.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
@@ -70,13 +72,13 @@ class LoginScreen extends StatelessWidget {
                         height: 40,
                       ),
                       CustomTextFormField(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                           controller: _emailcontroller, hintText: 'email'),
                       const SizedBox(
                         height: 40,
                       ),
                       CustomTextFormField(
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                           obscureText: true,
                           controller: _passwordcontroller,
                           hintText: "Password"),
@@ -90,8 +92,8 @@ class LoginScreen extends StatelessWidget {
                               password: _passwordcontroller.text.trim()));
                         },
                         child: Container(
-                          width: screenWidth * 0.4,
-                          height: screenHeight * 0.05,
+                          width: screenWidth * 0.9,
+                          height: screenHeight * 0.06,
                           decoration: BoxDecoration(
                             color: MyColor().primarycolor,
                             borderRadius: BorderRadius.circular(12),
@@ -107,6 +109,57 @@ class LoginScreen extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
+
+                     Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: MyColor().gray,
+            thickness: 1,
+            endIndent: 10,
+          ),
+        ),
+        Text(
+          "Or continue with Google account",
+          style: TextStyle(color: MyColor().gray),
+        ),
+        Expanded(
+          child: Divider(
+            color: MyColor().gray,
+            thickness: 1,
+            indent: 10,
+          ),
+        ),
+      ],
+    ),
+   const SizedBox(
+      height:  20,
+    ),
+    InkWell(
+     onTap: () {
+    context.read<AuthBlocBloc>().add(GoogleSignInEvent());
+  },
+      child: Container(
+       
+        height: screenHeight * 0.06,
+         width: screenWidth * 0.9,
+         decoration:  BoxDecoration(
+           borderRadius: BorderRadius.circular(13),
+          border: Border.all(
+            color:  MyColor().gray,
+            width: 0.5
+          )
+         ),
+         child:  Row(
+          mainAxisAlignment:  MainAxisAlignment.center,
+          children: [
+            Image.asset('asset/Google_png.png', height:  25,width: 25,),
+           const  Text("  Login With Goolge", style: TextStyle( color:  Colors.white, fontSize:  18),)
+          ],
+         ),
+      
+      ),
+    ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

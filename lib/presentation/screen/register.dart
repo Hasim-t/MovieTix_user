@@ -20,7 +20,7 @@ class RegisterPage extends StatelessWidget {
     final authbloc = BlocProvider.of<AuthBlocBloc>(context);
     return BlocBuilder<AuthBlocBloc, AuthBlocState>(builder: (context, state) {
       if (state is Authenticated) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(builder: (context) {
             return ProfilScreen();

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:movie/data/models/user_model.dart';
 
@@ -9,6 +10,7 @@ part 'auth_bloc_state.dart';
 
 class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   AuthBlocBloc() : super(AuthBlocInitial()) {
     on<CheckLoginStatusEvent>((event, emit) async {
       User? user;
@@ -73,6 +75,34 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         await _auth.signOut();
         emit(UnAutheticated());
       } catch (e) {}
+    });
+    on<GoogleSignInEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          emit(UnAutheticated());
+          return;
+        }
+
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        final UserCredential userCredential = await _auth.signInWithCredential(credential);
+        final user = userCredential.user;
+
+        if (user != null) {
+          // You might want to store additional user info in Firestore here
+          emit(Authenticated(user));
+        } else {
+          emit(UnAutheticated());
+        }
+      } catch (e) {
+        emit(AutheticatedError(msg: e.toString()));
+      }
     });
   }
 }

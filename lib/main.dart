@@ -2,9 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
+import 'package:movie/business_logic/blocs/google/bloc/google_auth_bloc.dart';
 
 import 'package:movie/firebase_options.dart';
-import 'package:movie/presentation/screen/profil_screen.dart';
+
 import 'package:movie/presentation/screen/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ void main() async {
   runApp(
     MultiBlocProvider(providers: [
       BlocProvider<AuthBlocBloc>(create: (context)=>AuthBlocBloc()..add(CheckLoginStatusEvent())),
-      
+      BlocProvider<GoogleAuthBloc>(create: (context)=> GoogleAuthBloc())
     ], child: MyApp())
      );
 }
