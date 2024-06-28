@@ -81,6 +81,7 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     emit(AutheticatedError(msg: e.toString()));
   }
 });
+
    on<GoogleSignInEvent>((event, emit) async {
   emit(AuthLoading());
   try {

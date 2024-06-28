@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/business_logic/blocs/google/bloc/google_auth_bloc.dart';
 
-import 'package:movie/firebase_options.dart';
+import 'package:movie/data/repositories/firebase_options.dart';
 
 import 'package:movie/presentation/screen/splash.dart';
 void main() async {
