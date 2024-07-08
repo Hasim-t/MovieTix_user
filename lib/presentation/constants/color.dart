@@ -5,4 +5,6 @@ class MyColor {
   Color darkblue = const Color(0xFF1D2233);
   Color white_ = Colors.white;
   Color gray = const Color(0xFFA9A2A3);
+  Color red = Colors.red;
+  Color white = Colors.white;
 }

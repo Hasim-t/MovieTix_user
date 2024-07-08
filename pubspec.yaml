@@ -42,6 +42,8 @@ dependencies:
   bloc: ^8.1.4
   google_fonts: ^6.2.1
   google_sign_in: ^6.2.1
+  panara_dialogs: ^0.1.5
+  flashy_tab_bar2: ^0.0.10
 
 dev_dependencies:
   flutter_test:

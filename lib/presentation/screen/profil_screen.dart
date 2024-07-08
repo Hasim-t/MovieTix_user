@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
+import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/login_screen.dart';
 
 class ProfilScreen extends StatelessWidget {
@@ -17,7 +18,9 @@ class ProfilScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
+        backgroundColor: MyColor().darkblue,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           actions: [
             IconButton(
               onPressed: () {
@@ -29,15 +32,15 @@ class ProfilScreen extends StatelessWidget {
                       return;
                     }
                   }
-                  // If not Google, assume email
+                
                   context.read<AuthBlocBloc>().add(EmailLogoutEvent());
                 }
               },
-              icon: Icon(Icons.logout),
+              icon: Icon(Icons.logout,color: MyColor().primarycolor,),
             )
           ],
         ),
-        // ... rest of your widget tree
+       
       ),
     );
   }

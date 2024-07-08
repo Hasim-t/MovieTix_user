@@ -34,7 +34,7 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
       emit(AuthLoading());
       try {
         final UserCredential = await _auth.createUserWithEmailAndPassword(
-            email: event.user!.email.toString(),
+            email: event.user.email.toString(),
             password: event.user.password.toString());
 
         final user = UserCredential.user;
@@ -85,7 +85,7 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
    on<GoogleSignInEvent>((event, emit) async {
   emit(AuthLoading());
   try {
-    // Force account selection
+    
     await _googleSignIn.signOut();
     
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

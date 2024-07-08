@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/presentation/constants/color.dart';
+import 'package:movie/presentation/screen/bottomnavigation.dart';
 import 'package:movie/presentation/screen/login_screen.dart';
-import 'package:movie/presentation/screen/profil_screen.dart';
+
 
 class Splash extends StatelessWidget {
   const Splash({super.key});
@@ -15,7 +16,7 @@ class Splash extends StatelessWidget {
         if (state is Authenticated) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) {
-            return  ProfilScreen();
+            return Bottomnavigation();
           }));
         } else if (state is UnAutheticated) {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
