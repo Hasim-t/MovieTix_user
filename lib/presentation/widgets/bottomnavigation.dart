@@ -37,7 +37,7 @@ class Bottomnavigation extends StatelessWidget {
               ]
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30)
               ),

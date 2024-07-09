@@ -9,7 +9,10 @@ class Homescreen extends StatelessWidget {
     return  Scaffold(
       backgroundColor:  MyColor().darkblue,
     appBar:  AppBar(
-      title:  Text("Home"),
+      backgroundColor: MyColor().primarycolor,
+      title: const  Text("Home",style: TextStyle(
+      
+      ),),
     ),
     );
   }

@@ -9,7 +9,10 @@ class UpcomingScreen extends StatelessWidget {
     return   Scaffold(
       backgroundColor: MyColor().darkblue,
     appBar:  AppBar(
-      title:  Text(" upcoming movie"),
+      backgroundColor:  MyColor().primarycolor,
+      title: const Text(" upcoming movie",style: TextStyle(
+       
+      ),),
     ),
     );
   }

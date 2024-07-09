@@ -7,4 +7,5 @@ class MyColor {
   Color gray = const Color(0xFFA9A2A3);
   Color red = Colors.red;
   Color white = Colors.white;
+  Color transparent = Colors.transparent;
 }

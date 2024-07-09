@@ -9,6 +9,7 @@ class BookingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor:  MyColor().darkblue,
       appBar:  AppBar(
+         backgroundColor:  MyColor().primarycolor,
         title: const  Text("Booking screen"),
       ),
     );
