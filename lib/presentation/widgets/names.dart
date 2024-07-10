@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie/presentation/constants/color.dart';
 
+
 class CoustomNameRow extends StatelessWidget {
   final String label;
   final String value;
@@ -16,6 +17,7 @@ class CoustomNameRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$label : ',
@@ -25,12 +27,17 @@ class CoustomNameRow extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              color: MyColor().white,
-              fontSize: 16,
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                color: MyColor().white,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.right,
+              softWrap: true,
+              overflow: TextOverflow.fade,
+             maxLines: 1,
             ),
           ),
         ],
