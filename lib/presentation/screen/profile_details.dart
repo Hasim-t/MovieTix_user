@@ -55,7 +55,7 @@ class MyProfile extends StatelessWidget {
                     radius: screenHeight * 0.11,
                     backgroundImage: userData['profileImageUrl'] != null
                         ? NetworkImage(userData['profileImageUrl'])
-                        : AssetImage('asset/avatar png.png') as ImageProvider,
+                        : const AssetImage('asset/avatar png.png') as ImageProvider,
                     child: userData['profileImageUrl'] == null
                         ? null
                         : Container(),
