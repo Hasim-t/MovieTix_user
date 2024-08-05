@@ -154,9 +154,10 @@ class MovieDetails extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) {
-                    return TheaterBookingScreen(movieId: movieId,
+                 Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return TheaterBookingScreen(
+                      movieId: movieId,
+                      movieData: movieData,
                     );
                   }));
                 },
