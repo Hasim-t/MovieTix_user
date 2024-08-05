@@ -1,4 +1,21 @@
+
 part of 'movie_bloc.dart';
 
-@immutable
-sealed class MovieEvent {}
+
+abstract class MovieEvent extends Equatable {
+  const MovieEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class FetchMovies extends MovieEvent {}
+
+class UpdateCarouselPage extends MovieEvent {
+  final int page;
+
+  const UpdateCarouselPage(this.page);
+
+  @override
+  List<Object> get props => [page];
+}
