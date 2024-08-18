@@ -1,194 +1,179 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:movie/business_logic/blocs/TheaterBooking/bloc/theater_booking_bloc.dart';
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/bookingscreen/showing_seat.dart';
 
-class TheaterBookingScreen extends StatefulWidget {
+class TheaterBookingScreen extends StatelessWidget {
   final String movieId;
   final Map<String, dynamic> movieData;
 
-  TheaterBookingScreen({required this.movieId, required this.movieData});
+  const TheaterBookingScreen({super.key, required this.movieId, required this.movieData});
 
   @override
-  _TheaterBookingScreenState createState() => _TheaterBookingScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => TheaterBookingBloc(
+        movieId: movieId,
+        firestore: FirebaseFirestore.instance,
+      )..add(LoadAvailableDates())..add(LoadTheaters()),
+      child: TheaterBookingView(movieData: movieData, movieId: movieId),
+    );
+  }
 }
 
-class _TheaterBookingScreenState extends State<TheaterBookingScreen> {
-  late DateTime _selectedDate;
-  List<DateTime> _availableDates = [];
+class TheaterBookingView extends StatelessWidget {
+  final Map<String, dynamic> movieData;
+  final String movieId;
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedDate = DateTime.now();
-    _loadAvailableDates();
-  }
-
-  void _loadAvailableDates() {
-    _availableDates = List.generate(7, (index) => DateTime.now().add(Duration(days: index)));
-  }
+   const TheaterBookingView({super.key, required this.movieData, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF093545),
+      backgroundColor: MyColor().darkblue,
       appBar: AppBar(
-        backgroundColor: Color(0xFF22A39F),
+        backgroundColor: MyColor().primarycolor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon:  Icon(Icons.arrow_back, color: MyColor().white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(widget.movieData['name'], style: TextStyle(color: Colors.white)),
+        title: Text(movieData['name'], style: TextStyle(color: MyColor().white)),
       ),
       body: Column(
         children: [
-         
+          _buildMovieHeader(),
+          _buildDateSelection(),
+          _buildTheaterList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMovieHeader() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(movieData['imageUrl']),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Stack(
+        children: [
           Container(
-            height: 200,
-            width: double.infinity,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(widget.movieData['imageUrl']),
-                fit: BoxFit.cover,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, MyColor().darkblue],
               ),
             ),
-            child: Stack(
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Color(0xFF093545)],
-                    ),
-                  ),
+                Text(
+                  movieData['name'],
+                  style: TextStyle(color: MyColor().white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                Positioned(
-                  bottom: 10,
-                  left: 10,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.movieData['name'],
-                        style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${widget.movieData['certification']} • ${widget.movieData['duration']}',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  ),
+                Text(
+                  '${movieData['certification']} • ${movieData['language']}',
+                  style: TextStyle(color: Colors.white70),
                 ),
               ],
             ),
           ),
-          // Date selection
-          Container(
-            height: 60,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _availableDates.length,
-              itemBuilder: (context, index) {
-                final date = _availableDates[index];
-                final isSelected = date.day == _selectedDate.day &&
-                    date.month == _selectedDate.month &&
-                    date.year == _selectedDate.year;
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedDate = date;
-                      });
-                    },
-                    child: Container(
-                      width: 60,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Color(0xFF22A39F) : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Color(0xFF22A39F)),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateFormat('dd').format(date),
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Color(0xFF22A39F),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            DateFormat('EEE').format(date),
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Color(0xFF22A39F),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // Theater list
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('owners').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final owners = snapshot.data!.docs;
-                return ListView.builder(
-                  itemCount: owners.length,
-                  itemBuilder: (context, index) {
-                    final owner = owners[index];
-                    final ownerData = owner.data() as Map<String, dynamic>;
-                    return FutureBuilder<QuerySnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('owners')
-                          .doc(owner.id)
-                          .collection('screens')
-                          .get(),
-                      builder: (context, screensSnapshot) {
-                        if (screensSnapshot.connectionState == ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        if (screensSnapshot.hasError) {
-                          return Center(child: Text('Error: ${screensSnapshot.error}'));
-                        }
-                        final screens = screensSnapshot.data!.docs;
-                        return Column(
-                          children: screens.map((screen) {
-                            final screenData = screen.data() as Map<String, dynamic>;
-                            return TheaterCard(
-                              screenName: screenData['name'] ?? 'Screen ${screen.id}',
-                              ownerName: ownerData['name'] ?? 'Owner ${owner.id}',
-                              movieId: widget.movieId,
-                              screenId: screen.id,
-                              ownerId: owner.id,
-                              selectedDate: _selectedDate,
-                            );
-                          }).toList(),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDateSelection() {
+    return BlocBuilder<TheaterBookingBloc, TheaterBookingState>(
+      builder: (context, state) {
+        return Container(
+          height: 60,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: state.availableDates.length,
+            itemBuilder: (context, index) {
+              final date = state.availableDates[index];
+              final isSelected = date.day == state.selectedDate.day &&
+                  date.month == state.selectedDate.month &&
+                  date.year == state.selectedDate.year;
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<TheaterBookingBloc>().add(SelectDate(date));
+                  },
+                  child: Container(
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Color(0xFF22A39F) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Color(0xFF22A39F)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          DateFormat('dd').format(date),
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Color(0xFF22A39F),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          DateFormat('EEE').format(date),
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Color(0xFF22A39F),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTheaterList() {
+    return BlocBuilder<TheaterBookingBloc, TheaterBookingState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return Expanded(child: Center(child: CircularProgressIndicator()));
+        }
+        return Expanded(
+          child: ListView.builder(
+            itemCount: state.theaters.length,
+            itemBuilder: (context, index) {
+              final theater = state.theaters[index];
+              return TheaterCard(
+                screenName: theater.screenName,
+                ownerName: theater.ownerName,
+                movieId: movieId,
+                screenId: theater.screenId,
+                ownerId: theater.ownerId,
+                selectedDate: state.selectedDate,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -284,19 +269,19 @@ class TheaterCard extends StatelessWidget {
                     ),
                     child: Text(time.toString(), style: TextStyle(color: Colors.white)),
                     onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ShowingSeat(
-          movieId: movieId,
-          screenId: screenId,
-          ownerId: ownerId,
-          selectedDate: selectedDate,
-          selectedTime: time.toString(),
-        ),
-      ),
-    );
-  },
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShowingSeat(
+                            movieId: movieId,
+                            screenId: screenId,
+                            ownerId: ownerId,
+                            selectedDate: selectedDate,
+                            selectedTime: time.toString(),
+                          ),
+                        ),
+                      );
+                    },
                   )).toList(),
                 );
               },

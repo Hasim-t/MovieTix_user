@@ -8,4 +8,10 @@ class MyColor {
   Color red = Colors.red;
   Color white = Colors.white;
   Color transparent = Colors.transparent;
+   Color shimmerBaseColor =
+      const Color(0xFF0D4D5E); 
+
+    Color shimmerHighlightColor =
+      const Color(0xFF1A6276); 
+  
 }
