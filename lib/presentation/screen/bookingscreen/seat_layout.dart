@@ -53,32 +53,34 @@ class TheaterSeatLayout extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        ...List.generate(cols, (colIndex) {
-                          final seatIndex = rowIndex * cols + colIndex;
-                          final isVisible = seatVisibility.isNotEmpty &&
-                                  seatIndex < seatVisibility.length
-                              ? seatVisibility[seatIndex]
-                              : true;
-                          final seatState = seatStates.isNotEmpty &&
-                                  seatIndex < seatStates.length
-                              ? SeatState.values.firstWhere(
-                                  (e) =>
-                                      e.toString().split('.').last ==
-                                      seatStates[seatIndex],
-                                  orElse: () => SeatState.unselected,
-                                )
-                              : SeatState.unselected;
+                      ...List.generate(cols, (colIndex) {
+                        final seatIndex = rowIndex * cols + colIndex;
+                        final isVisible = seatVisibility.isNotEmpty &&
+                                seatIndex < seatVisibility.length
+                            ? seatVisibility[seatIndex]
+                            : true;
+                        final seatState = seatStates.isNotEmpty &&
+                                seatIndex < seatStates.length
+                            ? SeatState.values.firstWhere(
+                                (e) =>
+                                    e.toString().split('.').last ==
+                                    seatStates[seatIndex],
+                                orElse: () => SeatState.unselected,
+                              )
+                            : SeatState.unselected;
 
-                          return Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => onSeatTap(rowIndex, colIndex),
-                                child: SeatSpace(
-                                  isVisible: isVisible,
-                                  state: seatState,
-                                  rowIndex: rowIndex,
-                                  colIndex: colIndex,
-                                  isSelected: selectedSeats.contains(seatIndex),
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: seatState != SeatState.sold
+                                  ? () => onSeatTap(rowIndex, colIndex)
+                                  : null,
+                              child: SeatSpace(
+                                isVisible: isVisible,
+                                state: seatState,
+                                rowIndex: rowIndex,
+                                colIndex: colIndex,
+                                isSelected: selectedSeats.contains(seatIndex),
                                 ),
                               ),
                               if (colIndex < cols - 1)

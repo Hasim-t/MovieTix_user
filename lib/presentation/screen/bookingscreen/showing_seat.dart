@@ -35,20 +35,73 @@ class _ShowingSeatState extends State<ShowingSeat> {
     _loadScreenData();
   }
 
-  Future<void> _loadScreenData() async {
-    final docSnapshot = await FirebaseFirestore.instance
+Future<void> _loadScreenData() async {
+  try {
+    // First, load the screen configuration
+    final screenDoc = await FirebaseFirestore.instance
         .collection('owners')
         .doc(widget.ownerId)
         .collection('screens')
         .doc(widget.screenId)
         .get();
 
-    if (docSnapshot.exists) {
-      setState(() {
-        screenData = docSnapshot.data() as Map<String, dynamic>;
-      });
+    if (!screenDoc.exists) {
+      throw Exception('Screen configuration not found');
     }
+
+    final screenConfig = screenDoc.data() as Map<String, dynamic>;
+
+    // Then, load the seat states for this specific showing
+    final showingDoc = await FirebaseFirestore.instance
+        .collection('owners')
+        .doc(widget.ownerId)
+        .collection('screens')
+        .doc(widget.screenId)
+        .collection('movie_schedules')
+        .doc(widget.movieId)
+        .collection('showings')
+        .doc('${widget.selectedDate.toIso8601String()}_${widget.selectedTime}')
+        .get();
+
+    Map<String, dynamic> showingData;
+    if (showingDoc.exists) {
+      showingData = showingDoc.data() as Map<String, dynamic>;
+    } else {
+      // If the showing document doesn't exist, create it with default seat states
+      showingData = _createDefaultShowingData(screenConfig);
+      await showingDoc.reference.set(showingData);
+    }
+
+    setState(() {
+      screenData = {
+        ...screenConfig,
+        'seatStates': showingData['seatStates'],
+      };
+    });
+  } catch (e) {
+    print('Error loading screen data: $e');
+    // Handle the error appropriately
   }
+}
+
+Map<String, dynamic> _createDefaultShowingData(Map<String, dynamic> screenConfig) {
+  final int totalSeats = screenConfig['rows'] * screenConfig['cols'];
+  return {
+    'seatStates': List.filled(totalSeats, SeatState.unselected.toString().split('.').last),
+  };
+}
+
+Map<String, dynamic> _createDefaultSeatData() {
+  // Create default seat data based on the screen configuration
+  // You might want to fetch this from the screen document
+  // For now, let's assume a simple 5x5 layout
+  return {
+    'rows': 5,
+    'cols': 5,
+    'seatStates': List.filled(25, SeatState.unselected.toString().split('.').last),
+    'seatVisibility': List.filled(25, true),
+  };
+}
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +222,8 @@ class _ShowingSeatState extends State<ShowingSeat> {
     print(response);
   }
 
-  handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+  handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+     await _updateSoldSeats();
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return TicketScreen();
     }));
@@ -179,4 +233,34 @@ class _ShowingSeatState extends State<ShowingSeat> {
   handleExternalWalletSelected(ExternalWalletResponse response) {
     print(response);
   }
+ 
+Future<void> _updateSoldSeats() async {
+  final showingRef = FirebaseFirestore.instance
+      .collection('owners')
+      .doc(widget.ownerId)
+      .collection('screens')
+      .doc(widget.screenId)
+      .collection('movie_schedules')
+      .doc(widget.movieId)
+      .collection('showings')
+      .doc('${widget.selectedDate.toIso8601String()}_${widget.selectedTime}');
+
+  // Get the current seatStates
+  final docSnapshot = await showingRef.get();
+  List<dynamic> seatStates = List<dynamic>.from(docSnapshot.data()?['seatStates'] ?? []);
+
+  // Update the seatStates for selected seats
+  for (int seatIndex in selectedSeats) {
+    if (seatIndex < seatStates.length) {
+      seatStates[seatIndex] = SeatState.sold.toString().split('.').last;
+    }
+  }
+
+  // Update Firestore
+  await showingRef.update({'seatStates': seatStates});
+
+  // Refresh the screen data
+  await _loadScreenData();
+}
+
 }
