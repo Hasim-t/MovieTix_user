@@ -5,7 +5,8 @@ import 'package:movie/presentation/screen/bookingscreen/seat_layout.dart';
 import 'package:movie/presentation/screen/bookingscreen/ticket.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class ShowingSeat extends StatefulWidget {
+
+class ShowingSeat extends StatelessWidget {
   final String movieId;
   final String screenId;
   final String ownerId;
@@ -22,27 +23,47 @@ class ShowingSeat extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ShowingSeatState createState() => _ShowingSeatState();
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: MyColor().darkblue,
+      appBar: AppBar(
+        backgroundColor: MyColor().primarycolor,
+        title:  const Text('Select Seats'),
+      ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _loadScreenData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return Center(child: Text('No data available'));
+          }
 
-class _ShowingSeatState extends State<ShowingSeat> {
-  Map<String, dynamic> screenData = {};
-  List<int> selectedSeats = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadScreenData();
+          final screenData = snapshot.data!;
+          return _SeatSelectionContent(
+            screenData: screenData,
+            movieId: movieId,
+            screenId: screenId,
+            ownerId: ownerId,
+            selectedDate: selectedDate,
+            selectedTime: selectedTime,
+          );
+        },
+      ),
+    );
   }
 
-Future<void> _loadScreenData() async {
+Future<Map<String, dynamic>> _loadScreenData() async {
   try {
-    // First, load the screen configuration
     final screenDoc = await FirebaseFirestore.instance
         .collection('owners')
-        .doc(widget.ownerId)
+        .doc(ownerId)
         .collection('screens')
-        .doc(widget.screenId)
+        .doc(screenId)
         .get();
 
     if (!screenDoc.exists) {
@@ -50,88 +71,90 @@ Future<void> _loadScreenData() async {
     }
 
     final screenConfig = screenDoc.data() as Map<String, dynamic>;
-
-    // Then, load the seat states for this specific showing
     final showingDoc = await FirebaseFirestore.instance
         .collection('owners')
-        .doc(widget.ownerId)
+        .doc(ownerId)
         .collection('screens')
-        .doc(widget.screenId)
+        .doc(screenId)
         .collection('movie_schedules')
-        .doc(widget.movieId)
+        .doc(movieId)
         .collection('showings')
-        .doc('${widget.selectedDate.toIso8601String()}_${widget.selectedTime}')
+        .doc('${selectedDate.toIso8601String().split('T')[0]}_$selectedTime')
         .get();
 
     Map<String, dynamic> showingData;
     if (showingDoc.exists) {
       showingData = showingDoc.data() as Map<String, dynamic>;
     } else {
-      // If the showing document doesn't exist, create it with default seat states
       showingData = _createDefaultShowingData(screenConfig);
       await showingDoc.reference.set(showingData);
     }
 
-    setState(() {
-      screenData = {
-        ...screenConfig,
-        'seatStates': showingData['seatStates'],
-      };
-    });
+    print('Loaded seat states: ${showingData['seatStates']}');
+
+    return {
+      ...screenConfig,
+      'seatStates': showingData['seatStates'],
+    };
   } catch (e) {
     print('Error loading screen data: $e');
-    // Handle the error appropriately
+    rethrow;
   }
 }
 
-Map<String, dynamic> _createDefaultShowingData(Map<String, dynamic> screenConfig) {
-  final int totalSeats = screenConfig['rows'] * screenConfig['cols'];
-  return {
-    'seatStates': List.filled(totalSeats, SeatState.unselected.toString().split('.').last),
-  };
+  Map<String, dynamic> _createDefaultShowingData(Map<String, dynamic> screenConfig) {
+    final int totalSeats = screenConfig['rows'] * screenConfig['cols'];
+    return {
+      'seatStates': List.filled(totalSeats, SeatState.unselected.toString().split('.').last),
+    };
+  }
 }
 
-Map<String, dynamic> _createDefaultSeatData() {
-  // Create default seat data based on the screen configuration
-  // You might want to fetch this from the screen document
-  // For now, let's assume a simple 5x5 layout
-  return {
-    'rows': 5,
-    'cols': 5,
-    'seatStates': List.filled(25, SeatState.unselected.toString().split('.').last),
-    'seatVisibility': List.filled(25, true),
-  };
+class _SeatSelectionContent extends StatefulWidget {
+  final Map<String, dynamic> screenData;
+  final String movieId;
+  final String screenId;
+  final String ownerId;
+  final DateTime selectedDate;
+  final String selectedTime;
+
+  const _SeatSelectionContent({
+    Key? key,
+    required this.screenData,
+    required this.movieId,
+    required this.screenId,
+    required this.ownerId,
+    required this.selectedDate,
+    required this.selectedTime,
+  }) : super(key: key);
+
+  @override
+  _SeatSelectionContentState createState() => _SeatSelectionContentState();
 }
+
+class _SeatSelectionContentState extends State<_SeatSelectionContent> {
+  List<int> selectedSeats = [];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColor().darkblue,
-      appBar: AppBar(
-        backgroundColor: MyColor().primarycolor,
-        title: Text('Select Seats'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: screenData.isNotEmpty
-                ? TheaterSeatLayout(
-                    screenData: screenData,
-                    screenId: widget.screenId,
-                    onSeatTap: _onSeatTap,
-                    selectedSeats: selectedSeats,
-                  )
-                : Center(child: CircularProgressIndicator()),
+    return Column(
+      children: [
+        Expanded(
+          child: TheaterSeatLayout(
+            screenData: widget.screenData,
+            screenId: widget.screenId,
+            onSeatTap: _onSeatTap,
+            selectedSeats: selectedSeats,
           ),
-          _buildLegend(),
-          _buildBottomBar(),
-        ],
-      ),
+        ),
+        _buildLegend(),
+        _buildBottomBar(),
+      ],
     );
   }
 
   void _onSeatTap(int rowIndex, int colIndex) {
-    final seatIndex = rowIndex * (screenData['cols'] ?? 0) + colIndex;
+    final seatIndex = rowIndex * (widget.screenData['cols'] ?? 0) + colIndex;
     setState(() {
       if (selectedSeats.contains(seatIndex)) {
         selectedSeats.remove(seatIndex);
@@ -167,7 +190,7 @@ Map<String, dynamic> _createDefaultSeatData() {
             borderRadius: BorderRadius.circular(5),
           ),
         ),
-        SizedBox(width: 8),
+      const   SizedBox(width: 8),
         Text(label, style: TextStyle(color: Colors.white)),
       ],
     );
@@ -197,43 +220,61 @@ Map<String, dynamic> _createDefaultSeatData() {
     );
   }
 
- void _proceedToBooking() {
-  final int seatPrice = 100; 
-  final int totalAmount = selectedSeats.length * seatPrice * 100; // Total in paise
+  void _proceedToBooking() {
+    final int seatPrice = 100; 
+    final int totalAmount = selectedSeats.length * seatPrice * 100; // Total in paise
 
-  Razorpay razorpay = Razorpay();
-  var options = {
-    'key': 'rzp_test_aSdoLl3SMxLJpu',
-    'amount': totalAmount, 
-    'name': 'Movie Ticket Booking',
-    'description': '${selectedSeats.length} seat(s) @ ₹$seatPrice each',
-    'retry': {'enabled': true, 'max_count': 1},
-    'send_sms_hash': true,
-    'prefill': {'contact': '7736463266', 'email': 'test@razorpay.com'},
-  };
+    Razorpay razorpay = Razorpay();
+    var options = {
+      'key': 'rzp_test_aSdoLl3SMxLJpu',
+      'amount': totalAmount, 
+      'name': 'Movie Ticket Booking',
+      'description': '${selectedSeats.length} seat(s) @ ₹$seatPrice each',
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {'contact': '7736463266', 'email': 'test@razorpay.com'},
+    };
 
-  razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
-  razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-  razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
-  razorpay.open(options);
-}
-
-  handlePaymentErrorResponse(PaymentFailureResponse response) {
-    print(response);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
+    razorpay.open(options);
   }
 
-  handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
-     await _updateSoldSeats();
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return TicketScreen();
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    print(response);
+    // Handle payment error
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+    await _updateSoldSeats();
+    Navigator.of(context).push( MaterialPageRoute(builder: (context) {
+      return TicketScreen(
+         movieName: widget.movieId , // Replace with actual movie name
+      theaterName: " jdkjfkd Your Theater Name", // Replace with actual theater name
+      numberOfSeats: selectedSeats.length,
+      seatNumbers: _generateSeatNumbers(),
+      date: widget.selectedDate,
+      time: widget.selectedTime,
+      );
     }));
     print(response);
   }
 
-  handleExternalWalletSelected(ExternalWalletResponse response) {
+List<String> _generateSeatNumbers() {
+  return selectedSeats.map((index) {
+    int row = index ~/ widget.screenData['cols'];
+    num col = index % widget.screenData['cols'];
+    String rowLetter = String.fromCharCode(65 + row); 
+    return '$rowLetter${col + 1}';
+  }).toList();
+}
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
     print(response);
+    // Handle external wallet selection
   }
- 
+
 Future<void> _updateSoldSeats() async {
   final showingRef = FirebaseFirestore.instance
       .collection('owners')
@@ -243,24 +284,26 @@ Future<void> _updateSoldSeats() async {
       .collection('movie_schedules')
       .doc(widget.movieId)
       .collection('showings')
-      .doc('${widget.selectedDate.toIso8601String()}_${widget.selectedTime}');
+      .doc('${widget.selectedDate.toIso8601String().split('T')[0]}_${widget.selectedTime}');
 
-  // Get the current seatStates
-  final docSnapshot = await showingRef.get();
-  List<dynamic> seatStates = List<dynamic>.from(docSnapshot.data()?['seatStates'] ?? []);
+  await FirebaseFirestore.instance.runTransaction((transaction) async {
+    final docSnapshot = await transaction.get(showingRef);
+    Map<String, dynamic> showingData = docSnapshot.data() ?? {};
+    List<String> seatStates = List<String>.from(showingData['seatStates'] ?? []);
 
-  // Update the seatStates for selected seats
-  for (int seatIndex in selectedSeats) {
-    if (seatIndex < seatStates.length) {
-      seatStates[seatIndex] = SeatState.sold.toString().split('.').last;
+    if (seatStates.isEmpty) {
+      seatStates = List.filled(widget.screenData['rows'] * widget.screenData['cols'], SeatState.unselected.toString().split('.').last);
     }
-  }
 
-  // Update Firestore
-  await showingRef.update({'seatStates': seatStates});
+    for (int seatIndex in selectedSeats) {
+      if (seatIndex < seatStates.length) {
+        seatStates[seatIndex] = SeatState.sold.toString().split('.').last;
+      }
+    }
 
-  // Refresh the screen data
-  await _loadScreenData();
+    transaction.set(showingRef, {'seatStates': seatStates}, SetOptions(merge: true));
+  });
+
+  print('Seats updated: ${selectedSeats.toString()}');
 }
-
 }

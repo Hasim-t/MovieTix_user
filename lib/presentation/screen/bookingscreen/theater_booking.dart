@@ -10,7 +10,8 @@ class TheaterBookingScreen extends StatelessWidget {
   final String movieId;
   final Map<String, dynamic> movieData;
 
-  const TheaterBookingScreen({super.key, required this.movieId, required this.movieData});
+  const TheaterBookingScreen(
+      {super.key, required this.movieId, required this.movieData});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,9 @@ class TheaterBookingScreen extends StatelessWidget {
       create: (context) => TheaterBookingBloc(
         movieId: movieId,
         firestore: FirebaseFirestore.instance,
-      )..add(LoadAvailableDates())..add(LoadTheaters()),
+      )
+        ..add(LoadAvailableDates())
+        ..add(LoadTheaters()),
       child: TheaterBookingView(movieData: movieData, movieId: movieId),
     );
   }
@@ -28,7 +31,8 @@ class TheaterBookingView extends StatelessWidget {
   final Map<String, dynamic> movieData;
   final String movieId;
 
-   const TheaterBookingView({super.key, required this.movieData, required this.movieId});
+  const TheaterBookingView(
+      {super.key, required this.movieData, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +41,11 @@ class TheaterBookingView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: MyColor().primarycolor,
         leading: IconButton(
-          icon:  Icon(Icons.arrow_back, color: MyColor().white),
+          icon: Icon(Icons.arrow_back, color: MyColor().white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(movieData['name'], style: TextStyle(color: MyColor().white)),
+        title:
+            Text(movieData['name'], style: TextStyle(color: MyColor().white)),
       ),
       body: Column(
         children: [
@@ -81,7 +86,10 @@ class TheaterBookingView extends StatelessWidget {
               children: [
                 Text(
                   movieData['name'],
-                  style: TextStyle(color: MyColor().white, fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: MyColor().white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '${movieData['certification']} • ${movieData['language']}',
@@ -117,7 +125,8 @@ class TheaterBookingView extends StatelessWidget {
                   child: Container(
                     width: 60,
                     decoration: BoxDecoration(
-                      color: isSelected ? Color(0xFF22A39F) : Colors.transparent,
+                      color:
+                          isSelected ? Color(0xFF22A39F) : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Color(0xFF22A39F)),
                     ),
@@ -127,7 +136,8 @@ class TheaterBookingView extends StatelessWidget {
                         Text(
                           DateFormat('dd').format(date),
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Color(0xFF22A39F),
+                            color:
+                                isSelected ? Colors.white : Color(0xFF22A39F),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -135,7 +145,8 @@ class TheaterBookingView extends StatelessWidget {
                         Text(
                           DateFormat('EEE').format(date),
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Color(0xFF22A39F),
+                            color:
+                                isSelected ? Colors.white : Color(0xFF22A39F),
                             fontSize: 14,
                           ),
                         ),
@@ -185,6 +196,7 @@ class TheaterCard extends StatelessWidget {
   final String screenId;
   final String ownerId;
   final DateTime selectedDate;
+  
 
   TheaterCard({
     required this.screenName,
@@ -207,14 +219,18 @@ class TheaterCard extends StatelessWidget {
           children: [
             Text(
               '$screenName - $ownerName',
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Icon(Icons.info_outline, color: Colors.white, size: 16),
                 SizedBox(width: 4),
-                Text('More Info', style: TextStyle(color: Colors.white, fontSize: 14)),
+                Text('More Info',
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
               ],
             ),
             SizedBox(height: 16),
@@ -235,54 +251,66 @@ class TheaterCard extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Text('No showtimes available', style: TextStyle(color: Colors.white));
+                  return Text('No showtimes available',
+                      style: TextStyle(color: Colors.white));
                 }
 
-                final scheduleData = snapshot.data!.data() as Map<String, dynamic>?;
+                final scheduleData =
+                    snapshot.data!.data() as Map<String, dynamic>?;
 
-                if (scheduleData == null || !scheduleData.containsKey('schedules')) {
-                  return Text('No schedules available', style: TextStyle(color: Colors.white));
+                if (scheduleData == null ||
+                    !scheduleData.containsKey('schedules')) {
+                  return Text('No schedules available',
+                      style: TextStyle(color: Colors.white));
                 }
 
-                final schedules = scheduleData['schedules'] as Map<String, dynamic>;
-                final selectedDateString = DateFormat('yyyy-MM-dd').format(selectedDate);
+                final schedules =
+                    scheduleData['schedules'] as Map<String, dynamic>;
+                final selectedDateString =
+                    DateFormat('yyyy-MM-dd').format(selectedDate);
 
                 final matchingDate = schedules.keys.firstWhere(
                   (date) => date.startsWith(selectedDateString),
                   orElse: () => '',
                 );
 
-                final showtimes = schedules[matchingDate] as List<dynamic>? ?? [];
+                final showtimes =
+                    schedules[matchingDate] as List<dynamic>? ?? [];
 
                 if (showtimes.isEmpty) {
-                  return Text('No showtimes available for ${DateFormat('MMMM d, yyyy').format(selectedDate)}', 
-                               style: TextStyle(color: Colors.white));
+                  return Text(
+                      'No showtimes available for ${DateFormat('MMMM d, yyyy').format(selectedDate)}',
+                      style: TextStyle(color: Colors.white));
                 }
 
                 return Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: showtimes.map((time) => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF22A39F),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: Text(time.toString(), style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ShowingSeat(
-                            movieId: movieId,
-                            screenId: screenId,
-                            ownerId: ownerId,
-                            selectedDate: selectedDate,
-                            selectedTime: time.toString(),
-                          ),
-                        ),
-                      );
-                    },
-                  )).toList(),
+                  children: showtimes
+                      .map((time) => ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF22A39F),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                            ),
+                            child: Text(time.toString(),
+                                style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ShowingSeat(
+                                    movieId: movieId,
+                                    screenId: screenId,
+                                    ownerId: ownerId,
+                                    selectedDate: selectedDate,
+                                    selectedTime: time.toString(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ))
+                      .toList(),
                 );
               },
             ),
