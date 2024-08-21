@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/data/models/user_model.dart';
 import 'package:movie/presentation/constants/color.dart';
-import 'package:movie/presentation/screen/profil_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/profil_screen.dart';
 import 'package:movie/presentation/widgets/textfromwidget.dart';
 
 class RegisterPage extends StatelessWidget {

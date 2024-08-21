@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/data/repositories/image_picker.dart';
 import 'package:movie/presentation/constants/color.dart';
-import 'package:movie/presentation/screen/login_screen.dart';
-import 'package:movie/presentation/screen/profile_details.dart';
+import 'package:movie/presentation/screen/login/login_screen.dart';
+import 'package:movie/presentation/screen/login/profile_details.dart';
 import 'package:movie/presentation/widgets/icon_text_row.dart';
 import 'package:movie/presentation/widgets/show_bottomsheet.dart';
 

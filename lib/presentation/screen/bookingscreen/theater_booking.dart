@@ -174,6 +174,7 @@ class TheaterBookingView extends StatelessWidget {
             itemBuilder: (context, index) {
               final theater = state.theaters[index];
               return TheaterCard(
+                movieData: movieData,
                 screenName: theater.screenName,
                 ownerName: theater.ownerName,
                 movieId: movieId,
@@ -196,16 +197,17 @@ class TheaterCard extends StatelessWidget {
   final String screenId;
   final String ownerId;
   final DateTime selectedDate;
-  
+  final Map<String, dynamic> movieData;
 
-  TheaterCard({
-    required this.screenName,
-    required this.ownerName,
-    required this.movieId,
-    required this.screenId,
-    required this.ownerId,
-    required this.selectedDate,
-  });
+  TheaterCard(
+      {required this.screenName,
+      required this.ownerName,
+      required this.movieId,
+      required this.screenId,
+      required this.ownerId,
+      required this.selectedDate,
+
+      required, required this.movieData});
 
   @override
   Widget build(BuildContext context) {
@@ -305,6 +307,7 @@ class TheaterCard extends StatelessWidget {
                                     ownerId: ownerId,
                                     selectedDate: selectedDate,
                                     selectedTime: time.toString(),
+                                    movieName: movieData['name'],
                                   ),
                                 ),
                               );

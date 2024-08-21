@@ -1,12 +1,56 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie/presentation/constants/color.dart';
-import 'package:movie/presentation/screen/mainscreen/home_screen.dart';
-import 'package:movie/presentation/widgets/bottomnavigation.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:ticket_widget/ticket_widget.dart';
 
-class TicketData extends StatelessWidget {
+class TicketViewScreen extends StatelessWidget {
+  final dynamic movieName;
+  final String theaterName;
+  final int numberOfSeats;
+  final List<String> seatNumbers;
+  final DateTime date;
+  final String time;
+
+  const TicketViewScreen({
+    super.key,
+    required this.movieName,
+    required this.theaterName,
+    required this.numberOfSeats,
+    required this.seatNumbers,
+    required this.date,
+    required this.time,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: MyColor().darkblue,
+      appBar: AppBar(
+        backgroundColor: MyColor().primarycolor,
+        title: const Text('Ticket'),
+      ),
+      body: Center(
+        child: TicketWidget(
+          isCornerRounded: true,
+          padding: const EdgeInsets.all(20),
+          width: 350,
+          height: 560,
+          child: TicketViewData(
+            movieName: movieName,
+            theaterName: theaterName,
+            numberOfSeats: numberOfSeats,
+            seatNumbers: seatNumbers,
+            date: date,
+            time: time,
+            screenName: 'screen 1',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TicketViewData extends StatelessWidget {
   final String movieName;
   final String theaterName;
   final String screenName;
@@ -15,7 +59,7 @@ class TicketData extends StatelessWidget {
   final DateTime date;
   final String time;
 
-  const TicketData({
+  const TicketViewData({
     required this.movieName,
     required this.theaterName,
     required this.screenName,
@@ -37,7 +81,7 @@ class TicketData extends StatelessWidget {
             Center(
               child: Text(
                 'MovieTix Ticket',
-                style: TextStyle(fontFamily: 'Cabin', fontSize: 28),
+                style:  TextStyle(fontFamily: 'Cabin', fontSize: 28),
               ),
             ),
             SizedBox(height: 10),
@@ -76,34 +120,11 @@ class TicketData extends StatelessWidget {
             SizedBox(height: 2),
             Center(
               child: ElevatedButton(
-                onPressed: () async {
-                  final User? currentUser = FirebaseAuth.instance.currentUser;
-
-                  if (currentUser != null) {
-                    CollectionReference ticketsRef = FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(currentUser.uid)
-                        .collection('tickets');
-
-                    await ticketsRef.add({
-                      'movieName': movieName,
-                      'theaterName': theaterName,
-                      'screenName': screenName,
-                      'numberOfSeats': numberOfSeats,
-                      'seatNumbers': seatNumbers,
-                      'date': date,
-                      'time': time,
-                      'createdAt': FieldValue.serverTimestamp(),
-                    });
-
-                    Navigator.of(context)
-                        .pushReplacement(MaterialPageRoute(builder: (context) {
-                      return Bottomnavigation();
-                    }));
-                  } else {}
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
-                child:  Text(
-                  'Done',
+                child: Text(
+                  'Back',
                   style: TextStyle(
                     color: MyColor().darkblue,
                   ),

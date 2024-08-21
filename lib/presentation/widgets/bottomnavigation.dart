@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/BottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:movie/presentation/constants/color.dart';
-import 'package:movie/presentation/screen/booking_screen.dart';
-import 'package:movie/presentation/screen/home_screen.dart';
-import 'package:movie/presentation/screen/profil_screen.dart';
-import 'package:movie/presentation/screen/theater_screen.dart';
-import 'package:movie/presentation/screen/upcoming_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/booking_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/home_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/profil_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/theater_screen.dart';
+import 'package:movie/presentation/screen/mainscreen/upcoming_screen.dart';
 class Bottomnavigation extends StatelessWidget {
   Bottomnavigation({Key? key}) : super(key: key);
 

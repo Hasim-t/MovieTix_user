@@ -4,9 +4,9 @@ import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/widgets/bottomnavigation.dart';
-import 'package:movie/presentation/screen/forgot_password.dart';
-import 'package:movie/presentation/screen/profil_screen.dart';
-import 'package:movie/presentation/screen/register.dart';
+import 'package:movie/presentation/screen/login/forgot_password.dart';
+import 'package:movie/presentation/screen/mainscreen/profil_screen.dart';
+import 'package:movie/presentation/screen/login/register.dart';
 import 'package:movie/presentation/widgets/textfromwidget.dart';
 
 // ignore: must_be_immutable

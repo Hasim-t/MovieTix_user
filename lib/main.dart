@@ -9,7 +9,7 @@ import 'package:movie/business_logic/blocs/movie/bloc/movie_bloc.dart';
 
 import 'package:movie/data/repositories/firebase_options.dart';
 
-import 'package:movie/presentation/screen/splash.dart';
+import 'package:movie/presentation/screen/mainscreen/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/widgets/bottomnavigation.dart';
-import 'package:movie/presentation/screen/login_screen.dart';
+import 'package:movie/presentation/screen/login/login_screen.dart';
 
 
 class Splash extends StatelessWidget {

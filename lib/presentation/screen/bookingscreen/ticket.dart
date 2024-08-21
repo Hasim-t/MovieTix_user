@@ -4,7 +4,7 @@ import 'package:movie/presentation/widgets/ticket_widget.dart';
 import 'package:ticket_widget/ticket_widget.dart';
 
 class TicketScreen extends StatelessWidget {
-  final String movieName;
+  final dynamic movieName;
   final String theaterName;
   final int numberOfSeats;
   final List<String> seatNumbers;
@@ -43,7 +43,7 @@ class TicketScreen extends StatelessWidget {
             seatNumbers: seatNumbers,
             date: date,
             time: time,
-            screenName: '',
+            screenName: 'screen 1',
           ),
         ),
       ),

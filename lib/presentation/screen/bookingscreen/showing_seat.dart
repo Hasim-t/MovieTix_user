@@ -5,13 +5,13 @@ import 'package:movie/presentation/screen/bookingscreen/seat_layout.dart';
 import 'package:movie/presentation/screen/bookingscreen/ticket.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-
 class ShowingSeat extends StatelessWidget {
   final String movieId;
   final String screenId;
   final String ownerId;
   final DateTime selectedDate;
   final String selectedTime;
+  final dynamic movieName;
 
   const ShowingSeat({
     Key? key,
@@ -20,6 +20,7 @@ class ShowingSeat extends StatelessWidget {
     required this.ownerId,
     required this.selectedDate,
     required this.selectedTime,
+    required this.movieName,
   }) : super(key: key);
 
   @override
@@ -28,7 +29,7 @@ class ShowingSeat extends StatelessWidget {
       backgroundColor: MyColor().darkblue,
       appBar: AppBar(
         backgroundColor: MyColor().primarycolor,
-        title:  const Text('Select Seats'),
+        title: const Text('Select Seats'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _loadScreenData(),
@@ -45,6 +46,7 @@ class ShowingSeat extends StatelessWidget {
 
           final screenData = snapshot.data!;
           return _SeatSelectionContent(
+            moviename: movieName,
             screenData: screenData,
             movieId: movieId,
             screenId: screenId,
@@ -57,55 +59,57 @@ class ShowingSeat extends StatelessWidget {
     );
   }
 
-Future<Map<String, dynamic>> _loadScreenData() async {
-  try {
-    final screenDoc = await FirebaseFirestore.instance
-        .collection('owners')
-        .doc(ownerId)
-        .collection('screens')
-        .doc(screenId)
-        .get();
+  Future<Map<String, dynamic>> _loadScreenData() async {
+    try {
+      final screenDoc = await FirebaseFirestore.instance
+          .collection('owners')
+          .doc(ownerId)
+          .collection('screens')
+          .doc(screenId)
+          .get();
 
-    if (!screenDoc.exists) {
-      throw Exception('Screen configuration not found');
+      if (!screenDoc.exists) {
+        throw Exception('Screen configuration not found');
+      }
+
+      final screenConfig = screenDoc.data() as Map<String, dynamic>;
+      final showingDoc = await FirebaseFirestore.instance
+          .collection('owners')
+          .doc(ownerId)
+          .collection('screens')
+          .doc(screenId)
+          .collection('movie_schedules')
+          .doc(movieId)
+          .collection('showings')
+          .doc('${selectedDate.toIso8601String().split('T')[0]}_$selectedTime')
+          .get();
+
+      Map<String, dynamic> showingData;
+      if (showingDoc.exists) {
+        showingData = showingDoc.data() as Map<String, dynamic>;
+      } else {
+        showingData = _createDefaultShowingData(screenConfig);
+        await showingDoc.reference.set(showingData);
+      }
+
+      print('Loaded seat states: ${showingData['seatStates']}');
+
+      return {
+        ...screenConfig,
+        'seatStates': showingData['seatStates'],
+      };
+    } catch (e) {
+      print('Error loading screen data: $e');
+      rethrow;
     }
-
-    final screenConfig = screenDoc.data() as Map<String, dynamic>;
-    final showingDoc = await FirebaseFirestore.instance
-        .collection('owners')
-        .doc(ownerId)
-        .collection('screens')
-        .doc(screenId)
-        .collection('movie_schedules')
-        .doc(movieId)
-        .collection('showings')
-        .doc('${selectedDate.toIso8601String().split('T')[0]}_$selectedTime')
-        .get();
-
-    Map<String, dynamic> showingData;
-    if (showingDoc.exists) {
-      showingData = showingDoc.data() as Map<String, dynamic>;
-    } else {
-      showingData = _createDefaultShowingData(screenConfig);
-      await showingDoc.reference.set(showingData);
-    }
-
-    print('Loaded seat states: ${showingData['seatStates']}');
-
-    return {
-      ...screenConfig,
-      'seatStates': showingData['seatStates'],
-    };
-  } catch (e) {
-    print('Error loading screen data: $e');
-    rethrow;
   }
-}
 
-  Map<String, dynamic> _createDefaultShowingData(Map<String, dynamic> screenConfig) {
+  Map<String, dynamic> _createDefaultShowingData(
+      Map<String, dynamic> screenConfig) {
     final int totalSeats = screenConfig['rows'] * screenConfig['cols'];
     return {
-      'seatStates': List.filled(totalSeats, SeatState.unselected.toString().split('.').last),
+      'seatStates': List.filled(
+          totalSeats, SeatState.unselected.toString().split('.').last),
     };
   }
 }
@@ -116,6 +120,7 @@ class _SeatSelectionContent extends StatefulWidget {
   final String screenId;
   final String ownerId;
   final DateTime selectedDate;
+  final dynamic moviename;
   final String selectedTime;
 
   const _SeatSelectionContent({
@@ -125,7 +130,7 @@ class _SeatSelectionContent extends StatefulWidget {
     required this.screenId,
     required this.ownerId,
     required this.selectedDate,
-    required this.selectedTime,
+    required this.selectedTime, this.moviename,
   }) : super(key: key);
 
   @override
@@ -190,7 +195,7 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
             borderRadius: BorderRadius.circular(5),
           ),
         ),
-      const   SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(label, style: TextStyle(color: Colors.white)),
       ],
     );
@@ -221,13 +226,14 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
   }
 
   void _proceedToBooking() {
-    final int seatPrice = 100; 
-    final int totalAmount = selectedSeats.length * seatPrice * 100; // Total in paise
+    final int seatPrice = 100;
+    final int totalAmount =
+        selectedSeats.length * seatPrice * 100; // Total in paise
 
     Razorpay razorpay = Razorpay();
     var options = {
       'key': 'rzp_test_aSdoLl3SMxLJpu',
-      'amount': totalAmount, 
+      'amount': totalAmount,
       'name': 'Movie Ticket Booking',
       'description': '${selectedSeats.length} seat(s) @ ₹$seatPrice each',
       'retry': {'enabled': true, 'max_count': 1},
@@ -248,62 +254,67 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
     await _updateSoldSeats();
-    Navigator.of(context).push( MaterialPageRoute(builder: (context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return TicketScreen(
-         movieName: widget.movieId , // Replace with actual movie name
-      theaterName: " jdkjfkd Your Theater Name", // Replace with actual theater name
-      numberOfSeats: selectedSeats.length,
-      seatNumbers: _generateSeatNumbers(),
-      date: widget.selectedDate,
-      time: widget.selectedTime,
+        movieName: widget.moviename, // Replace with actual movie name
+        theaterName: " Your Theater Name",
+        numberOfSeats: selectedSeats.length,
+        seatNumbers: _generateSeatNumbers(),
+        date: widget.selectedDate,
+        time: widget.selectedTime,
       );
     }));
     print(response);
   }
 
-List<String> _generateSeatNumbers() {
-  return selectedSeats.map((index) {
-    int row = index ~/ widget.screenData['cols'];
-    num col = index % widget.screenData['cols'];
-    String rowLetter = String.fromCharCode(65 + row); 
-    return '$rowLetter${col + 1}';
-  }).toList();
-}
+  List<String> _generateSeatNumbers() {
+    return selectedSeats.map((index) {
+      int row = index ~/ widget.screenData['cols'];
+      num col = index % widget.screenData['cols'];
+      String rowLetter = String.fromCharCode(65 + row);
+      return '$rowLetter${col + 1}';
+    }).toList();
+  }
 
   void handleExternalWalletSelected(ExternalWalletResponse response) {
     print(response);
     // Handle external wallet selection
   }
 
-Future<void> _updateSoldSeats() async {
-  final showingRef = FirebaseFirestore.instance
-      .collection('owners')
-      .doc(widget.ownerId)
-      .collection('screens')
-      .doc(widget.screenId)
-      .collection('movie_schedules')
-      .doc(widget.movieId)
-      .collection('showings')
-      .doc('${widget.selectedDate.toIso8601String().split('T')[0]}_${widget.selectedTime}');
+  Future<void> _updateSoldSeats() async {
+    final showingRef = FirebaseFirestore.instance
+        .collection('owners')
+        .doc(widget.ownerId)
+        .collection('screens')
+        .doc(widget.screenId)
+        .collection('movie_schedules')
+        .doc(widget.movieId)
+        .collection('showings')
+        .doc(
+            '${widget.selectedDate.toIso8601String().split('T')[0]}_${widget.selectedTime}');
 
-  await FirebaseFirestore.instance.runTransaction((transaction) async {
-    final docSnapshot = await transaction.get(showingRef);
-    Map<String, dynamic> showingData = docSnapshot.data() ?? {};
-    List<String> seatStates = List<String>.from(showingData['seatStates'] ?? []);
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final docSnapshot = await transaction.get(showingRef);
+      Map<String, dynamic> showingData = docSnapshot.data() ?? {};
+      List<String> seatStates =
+          List<String>.from(showingData['seatStates'] ?? []);
 
-    if (seatStates.isEmpty) {
-      seatStates = List.filled(widget.screenData['rows'] * widget.screenData['cols'], SeatState.unselected.toString().split('.').last);
-    }
-
-    for (int seatIndex in selectedSeats) {
-      if (seatIndex < seatStates.length) {
-        seatStates[seatIndex] = SeatState.sold.toString().split('.').last;
+      if (seatStates.isEmpty) {
+        seatStates = List.filled(
+            widget.screenData['rows'] * widget.screenData['cols'],
+            SeatState.unselected.toString().split('.').last);
       }
-    }
 
-    transaction.set(showingRef, {'seatStates': seatStates}, SetOptions(merge: true));
-  });
+      for (int seatIndex in selectedSeats) {
+        if (seatIndex < seatStates.length) {
+          seatStates[seatIndex] = SeatState.sold.toString().split('.').last;
+        }
+      }
 
-  print('Seats updated: ${selectedSeats.toString()}');
-}
+      transaction.set(
+          showingRef, {'seatStates': seatStates}, SetOptions(merge: true));
+    });
+
+    print('Seats updated: ${selectedSeats.toString()}');
+  }
 }

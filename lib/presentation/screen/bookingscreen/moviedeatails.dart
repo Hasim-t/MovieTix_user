@@ -165,7 +165,7 @@ class MovieDetails extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: MyColor().darkblue,
                   backgroundColor: MyColor().primarycolor,
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
               ),
             ),
