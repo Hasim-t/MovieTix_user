@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -56,4 +56,4 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   }
 }
 
-// Update MovieState to include malayalamMovies
+

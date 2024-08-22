@@ -30,7 +30,6 @@ class _BookingScreenState extends State<BookingScreen>
       ),
     );
 
-   
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
     });

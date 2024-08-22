@@ -14,12 +14,14 @@ class CustomTextFormField extends StatefulWidget{
   final TextStyle? errorStyle;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  // ignore: prefer_typing_uninitialized_variables
   final type;
   final TextStyle? style;
+  // ignore: prefer_typing_uninitialized_variables
   final maxlines;
   const CustomTextFormField({
     this.onChanged,
-    Key? key,
+    super.key,
     this.hintstyle,
     this.errorStyle,
     this.readOnly = false,
@@ -35,7 +37,7 @@ class CustomTextFormField extends StatefulWidget{
     this.prefixIcon,
     this.suffixIcon,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
@@ -77,11 +79,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         errorBorder: OutlineInputBorder(
             // Add this
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.red)),
+            borderSide: const BorderSide(color: Colors.red)),
         focusedErrorBorder: OutlineInputBorder(
             // Add this
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.red)),
+            borderSide:const BorderSide(color: Colors.red)),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.obscureText
             ? IconButton(

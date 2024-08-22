@@ -59,7 +59,7 @@ class TicketViewData extends StatelessWidget {
   final DateTime date;
   final String time;
 
-  const TicketViewData({
+  const TicketViewData({super.key, 
     required this.movieName,
     required this.theaterName,
     required this.screenName,
@@ -91,9 +91,9 @@ class TicketViewData extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('Theater Name:', theaterName),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('No. of Seats:', numberOfSeats.toString()),
             SizedBox(height: 10),
             buildInfoRow('Seat Numbers:', seatNumbers.join(', ')),

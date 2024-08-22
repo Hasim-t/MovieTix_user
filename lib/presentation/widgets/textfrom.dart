@@ -7,8 +7,8 @@ class CustomTextFormFields extends StatelessWidget {
   final void Function(String)? onChange;
   final Color? colors;
 
-  CustomTextFormFields(
-      {Key? key,
+  const CustomTextFormFields(
+      {super.key, 
       required this.controler,
       this.onChange,
       this.prefixIcon,

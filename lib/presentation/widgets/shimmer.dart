@@ -155,7 +155,7 @@ Widget buildMovieCardShimmer() {
       return MoviesDeatail(movie: movie);
                 }));
               },
-              child: Text('Book'),
+              child:  Text('Book'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: MyColor().darkblue,
