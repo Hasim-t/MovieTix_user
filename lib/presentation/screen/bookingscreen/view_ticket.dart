@@ -74,37 +74,37 @@ class TicketViewData extends StatelessWidget {
     return Scaffold(
       backgroundColor: MyColor().white,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
+            const Center(
               child: Text(
                 'MovieTix Ticket',
                 style:  TextStyle(fontFamily: 'Cabin', fontSize: 28),
               ),
             ),
-            SizedBox(height: 10),
+           const SizedBox(height: 10),
             Center(
               child: Text(
                 movieName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
            const  SizedBox(height: 10),
             buildInfoRow('Theater Name:', theaterName),
            const  SizedBox(height: 10),
             buildInfoRow('No. of Seats:', numberOfSeats.toString()),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('Seat Numbers:', seatNumbers.join(', ')),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Date:', '${date.day}/${date.month}/${date.year}'),
-            SizedBox(height: 10),
+          const   SizedBox(height: 10),
             buildInfoRow('Time:', time),
-            SizedBox(height: 10),
+          const   SizedBox(height: 10),
             buildInfoRow('Screens:', screenName),
             Center(
-              child: Container(
+              child:  SizedBox(
                 height: 150,
                 width: 150,
                 child: QrImageView(
@@ -114,21 +114,15 @@ class TicketViewData extends StatelessWidget {
                 ),
               ),
             ),
-            Center(
+           const  Center(
               child: Text('Scan the QR code'),
             ),
-            SizedBox(height: 2),
+            const SizedBox(height: 2),
             Center(
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  'Back',
-                  style: TextStyle(
-                    color: MyColor().darkblue,
-                  ),
-                ),
                 style: ButtonStyle(
                   backgroundColor:
                       WidgetStateProperty.all(MyColor().primarycolor),
@@ -137,6 +131,12 @@ class TicketViewData extends StatelessWidget {
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                  ),
+                ),
+                child: Text(
+                  'Back',
+                  style: TextStyle(
+                    color: MyColor().darkblue,
                   ),
                 ),
               ),

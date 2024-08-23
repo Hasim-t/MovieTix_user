@@ -55,14 +55,14 @@ class ForgotPassword extends StatelessWidget {
                 color: MyColor().white),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height:  20,),
+           const  SizedBox(height:  20,),
             CustomTextFormField(
                 controller: emailcontroller, hintText: "Enter eamil"),
-                SizedBox(
+               const  SizedBox(
                   height: 10,
                 ),
             ElevatedButton(
-                onPressed: forgotpassword, child: Text("Reset password"))
+                onPressed: forgotpassword, child: const Text("Reset password"))
           ],
         ),
       ),

@@ -5,7 +5,6 @@ import 'package:movie/business_logic/blocs/auth/bloc/auth_bloc_bloc.dart';
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/widgets/bottomnavigation.dart';
 import 'package:movie/presentation/screen/login/forgot_password.dart';
-import 'package:movie/presentation/screen/mainscreen/profil_screen.dart';
 import 'package:movie/presentation/screen/login/register.dart';
 import 'package:movie/presentation/widgets/textfromwidget.dart';
 
@@ -95,7 +94,7 @@ class LoginScreen extends StatelessWidget {
                             obscureText: true,
                             controller: _passwordcontroller,
                             hintText: "Password"),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Row(
@@ -138,8 +137,8 @@ class LoginScreen extends StatelessWidget {
                             ),
                             child: Center(
                               child: state is AuthLoading
-                                  ? CircularProgressIndicator(color: Colors.white)
-                                  : Text(
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : const Text(
                                       'Login',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -207,7 +206,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
+                      const   SizedBox(
                           height: 10,
                         ),
                         Row(

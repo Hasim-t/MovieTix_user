@@ -57,7 +57,7 @@ class TheaterBookingBloc extends Bloc<TheaterBookingEvent, TheaterBookingState> 
       emit(state.copyWith(theaters: theaters, isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false));
-      // Handle error
+     
     }
   }
 }

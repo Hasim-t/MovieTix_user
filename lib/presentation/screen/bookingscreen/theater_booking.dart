@@ -93,7 +93,7 @@ class TheaterBookingView extends StatelessWidget {
                 ),
                 Text(
                   '${movieData['certification']} • ${movieData['language']}',
-                  style: TextStyle(color: Colors.white70),
+                  style: const TextStyle(color: Colors.white70),
                 ),
               ],
             ),
@@ -106,7 +106,7 @@ class TheaterBookingView extends StatelessWidget {
   Widget _buildDateSelection() {
     return BlocBuilder<TheaterBookingBloc, TheaterBookingState>(
       builder: (context, state) {
-        return Container(
+        return SizedBox(
           height: 60,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -117,7 +117,7 @@ class TheaterBookingView extends StatelessWidget {
                   date.month == state.selectedDate.month &&
                   date.year == state.selectedDate.year;
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: GestureDetector(
                   onTap: () {
                     context.read<TheaterBookingBloc>().add(SelectDate(date));
@@ -126,9 +126,9 @@ class TheaterBookingView extends StatelessWidget {
                     width: 60,
                     decoration: BoxDecoration(
                       color:
-                          isSelected ? Color(0xFF22A39F) : Colors.transparent,
+                          isSelected ? MyColor().primarycolor : MyColor().transparent,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color(0xFF22A39F)),
+                      border: Border.all(color: MyColor().primarycolor),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +137,7 @@ class TheaterBookingView extends StatelessWidget {
                           DateFormat('dd').format(date),
                           style: TextStyle(
                             color:
-                                isSelected ? Colors.white : Color(0xFF22A39F),
+                                isSelected ? MyColor().primarycolor :MyColor().primarycolor,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -146,7 +146,7 @@ class TheaterBookingView extends StatelessWidget {
                           DateFormat('EEE').format(date),
                           style: TextStyle(
                             color:
-                                isSelected ? Colors.white : Color(0xFF22A39F),
+                                isSelected ? MyColor().white :MyColor().primarycolor,
                             fontSize: 14,
                           ),
                         ),
@@ -166,7 +166,7 @@ class TheaterBookingView extends StatelessWidget {
     return BlocBuilder<TheaterBookingBloc, TheaterBookingState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return Expanded(child: Center(child: CircularProgressIndicator()));
+          return const Expanded(child: Center(child: CircularProgressIndicator()));
         }
         return Expanded(
           child: ListView.builder(
@@ -199,8 +199,9 @@ class TheaterCard extends StatelessWidget {
   final DateTime selectedDate;
   final Map<String, dynamic> movieData;
 
-  TheaterCard(
-      {required this.screenName,
+  const TheaterCard(
+      { super.key,
+        required this.screenName,
       required this.ownerName,
       required this.movieId,
       required this.screenId,
@@ -213,21 +214,21 @@ class TheaterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Color(0xFF134656),
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '$screenName - $ownerName',
               style: TextStyle(
-                  color: Colors.white,
+                  color: MyColor().white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Row(
+            const Row(
               children: [
                 Icon(Icons.info_outline, color: Colors.white, size: 16),
                 SizedBox(width: 4),
@@ -235,7 +236,7 @@ class TheaterCard extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 14)),
               ],
             ),
-            SizedBox(height: 16),
+           const  SizedBox(height: 16),
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('owners')
@@ -247,14 +248,14 @@ class TheaterCard extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 if (!snapshot.hasData || !snapshot.data!.exists) {
                   return Text('No showtimes available',
-                      style: TextStyle(color: Colors.white));
+                      style: TextStyle(color: MyColor().white));
                 }
 
                 final scheduleData =
@@ -263,7 +264,7 @@ class TheaterCard extends StatelessWidget {
                 if (scheduleData == null ||
                     !scheduleData.containsKey('schedules')) {
                   return Text('No schedules available',
-                      style: TextStyle(color: Colors.white));
+                      style: TextStyle(color: MyColor().white));
                 }
 
                 final schedules =
@@ -282,7 +283,7 @@ class TheaterCard extends StatelessWidget {
                 if (showtimes.isEmpty) {
                   return Text(
                       'No showtimes available for ${DateFormat('MMMM d, yyyy').format(selectedDate)}',
-                      style: TextStyle(color: Colors.white));
+                      style: TextStyle(color: MyColor().white));
                 }
 
                 return Wrap(
@@ -291,12 +292,12 @@ class TheaterCard extends StatelessWidget {
                   children: showtimes
                       .map((time) => ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF22A39F),
+                              backgroundColor: MyColor().primarycolor,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                             ),
                             child: Text(time.toString(),
-                                style: TextStyle(color: Colors.white)),
+                                style: const TextStyle(color: Colors.white)),
                             onPressed: () {
                               Navigator.push(
                                 context,

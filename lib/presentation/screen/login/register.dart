@@ -23,7 +23,7 @@ class RegisterPage extends StatelessWidget {
     if (state is Authenticated) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => ProfilScreen()),
+        MaterialPageRoute(builder: (context) => const ProfilScreen()),
         (route) => false,
       );
     } else if (state is AutheticatedError) {
@@ -70,7 +70,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       CustomTextFormField(
                         errorText: "Name is required",
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                           controller: _namecontroller,
                           hintText: "Full Name"),
                       const SizedBox(
@@ -81,15 +81,15 @@ class RegisterPage extends StatelessWidget {
                           prefixIcon: const Icon(Icons.email),
                           controller: _emailnamecontroller,
                           hintText: " Email"),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       CustomTextFormField(
                           errorText: "Username is required",
-                          prefixIcon: Icon(Icons.alternate_email_rounded),
+                          prefixIcon:const Icon(Icons.alternate_email_rounded),
                           controller: _usernamecontroller,
                           hintText: "Username"),
-                      SizedBox(
+                     const  SizedBox(
                         height: 30,
                       ),
                       CustomTextFormField(
@@ -109,7 +109,7 @@ class RegisterPage extends StatelessWidget {
   ),
   child: Center(
     child: state is AuthLoading
-      ? CircularProgressIndicator(color: Colors.white)
+      ? const CircularProgressIndicator(color: Colors.white)
       : InkWell(
           onTap: () {
             if(_forKey.currentState!.validate()){

@@ -7,12 +7,12 @@ import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/widgets/textfromwidget.dart';
 
 void showProfileBottomSheet(BuildContext context, Map<String, dynamic> userData) {
-  double screenHeight = MediaQuery.of(context).size.height;
+  // double screenHeight = MediaQuery.of(context).size.height;
   double screenWidth = MediaQuery.of(context).size.width;
 TextEditingController namecontroller = TextEditingController(text: userData['name'] ?? '');
   TextEditingController phonecontroller = TextEditingController(text: userData['phone'] ?? '');
-  TextEditingController Gentercontroller = TextEditingController(text: userData['gender'] ?? '');
-  TextEditingController Dobcontroller = TextEditingController(text: userData['dateOfBirth'] ?? '');
+  TextEditingController gentercontroller = TextEditingController(text: userData['gender'] ?? '');
+  TextEditingController dobcontroller = TextEditingController(text: userData['dateOfBirth'] ?? '');
   TextEditingController maragecontroller = TextEditingController(text: userData['maritalStatus'] ?? '');
 
   void saveUserDetails() async {
@@ -26,8 +26,8 @@ TextEditingController namecontroller = TextEditingController(text: userData['nam
           .update({
         'name': namecontroller.text,
         'phone': phonecontroller.text,
-        'gender': Gentercontroller.text,
-        'dateOfBirth': Dobcontroller.text,
+        'gender': gentercontroller.text,
+        'dateOfBirth': dobcontroller.text,
         'maritalStatus': maragecontroller.text,
       });
        
@@ -71,7 +71,7 @@ TextEditingController namecontroller = TextEditingController(text: userData['nam
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    SizedBox(height: 10),
+                   const  SizedBox(height: 10),
                     Text("Edit Profile",
                         style: TextStyle(color: MyColor().primarycolor)),
                     const SizedBox(height: 20),
@@ -82,10 +82,10 @@ TextEditingController namecontroller = TextEditingController(text: userData['nam
                         controller: phonecontroller, hintText: "Phone"),
                     const SizedBox(height: 20),
                     CustomTextFormField(
-                        controller: Gentercontroller, hintText: "Gender"),
+                        controller: gentercontroller, hintText: "Gender"),
                     const SizedBox(height: 20),
                     CustomTextFormField(
-                        controller: Dobcontroller, hintText: "Date of Birth"),
+                        controller: dobcontroller, hintText: "Date of Birth"),
                     const SizedBox(height: 20),
                     CustomTextFormField(
                         controller: maragecontroller,
@@ -98,7 +98,7 @@ TextEditingController namecontroller = TextEditingController(text: userData['nam
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text("Save"),
+                      child: const Text("Save"),
                     ),
                   const   SizedBox(height: 20), 
                   ],

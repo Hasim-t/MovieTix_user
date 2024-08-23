@@ -8,12 +8,12 @@ class CoustomRowIcontext extends StatelessWidget {
   final Color? color;
 
   const CoustomRowIcontext({
-    Key? key,
+    super.key,
     this.color,
     this.ontap,
     required this.icon,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

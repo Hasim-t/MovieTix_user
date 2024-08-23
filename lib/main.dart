@@ -24,7 +24,7 @@ void main() async {
        BlocProvider<MovieBloc>(
           create: (context) => MovieBloc(FirebaseFirestore.instance)..add(FetchMovies()),
         ),
-    ], child: MyApp())
+    ], child: const MyApp())
      );
 }
 

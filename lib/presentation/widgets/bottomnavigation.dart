@@ -9,14 +9,14 @@ import 'package:movie/presentation/screen/mainscreen/profil_screen.dart';
 import 'package:movie/presentation/screen/mainscreen/theater_screen.dart';
 import 'package:movie/presentation/screen/mainscreen/upcoming_screen.dart';
 class Bottomnavigation extends StatelessWidget {
-  Bottomnavigation({Key? key}) : super(key: key);
+  Bottomnavigation({super.key});
 
   final List<Widget> pages = [
     const Homescreen(),
    const TheaterScreen(),
    const UpcomingScreen(),
     const  BookingScreen(),
-      ProfilScreen()
+     const ProfilScreen()
   ];
 
   @override

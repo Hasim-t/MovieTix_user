@@ -9,7 +9,7 @@ class MyProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -34,13 +34,13 @@ class MyProfile extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(child: Text("No user data found"));
+            return const Center(child: Text("No user data found"));
           }
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -84,12 +84,12 @@ class MyProfile extends StatelessWidget {
                 CoustomNameRow(label: 'Date of Birth', value: userData['dateOfBirth'] ?? 'Not specified'),
                const  SizedBox(height: 10),
                 CoustomNameRow(label: 'Marital Status', value: userData['maritalStatus'] ?? 'Not specified'),
-                Spacer(),
+               const  Spacer(),
                 ElevatedButton(
                   onPressed: () {
                     showProfileBottomSheet(context, userData);
                   },
-                  child: Text("Edit"),
+                  child: const Text("Edit"),
                 ),
                 SizedBox(height: screenHeight * 0.1),
               ],

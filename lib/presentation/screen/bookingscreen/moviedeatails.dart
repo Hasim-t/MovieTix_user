@@ -7,7 +7,7 @@ import 'package:movie/presentation/screen/bookingscreen/theater_booking.dart';
 class MoviesDeatail extends StatelessWidget {
   final DocumentSnapshot movie;
 
-  const MoviesDeatail({Key? key, required this.movie}) : super(key: key);
+  const MoviesDeatail({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +24,11 @@ class MovieDetails extends StatelessWidget {
   final Map<String, dynamic> movieData;
   final String  movieId;
 
-  MovieDetails({
-    Key? key,
+  const MovieDetails({
+    super.key,
     required this.movieData,
     required this.movieId
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class MovieDetails extends StatelessWidget {
                           top: 10,
                           left: 10,
                           child: IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.white),
+                            icon: const Icon(Icons.arrow_back, color: Colors.white),
                             onPressed: () => Navigator.pop(context),
                           ),
                         ),
@@ -67,32 +67,32 @@ class MovieDetails extends StatelessWidget {
                         children: [
                           Text(
                             movieData['name'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                     const      SizedBox(height: 8),
                           Row(
                             children: [
                               Chip(
                                 label: Text(movieData['language']),
                                 backgroundColor: MyColor().primarycolor,
                               ),
-                              SizedBox(width: 8),
+                            const  SizedBox(width: 8),
                               Chip(
                                 label: Text(movieData['category']),
                                 backgroundColor: MyColor().primarycolor,
                               ),
-                              SizedBox(width: 8),
+                            const  SizedBox(width: 8),
                               Chip(
                                 label: Text(movieData['certification']),
                                 backgroundColor: MyColor().primarycolor,
                               ),
                             ],
                           ),
-                          SizedBox(height: 16),
+                         const  SizedBox(height: 16),
                           Text(
                             'Plot',
                             style: TextStyle(
@@ -101,12 +101,12 @@ class MovieDetails extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                        const   SizedBox(height: 8),
                           Text(
                             movieData['description'],
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Cast',
                             style: TextStyle(
@@ -115,7 +115,7 @@ class MovieDetails extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                        const   SizedBox(height: 8),
                           SizedBox(
                             height: 100,
                             child: ListView.builder(
@@ -132,10 +132,10 @@ class MovieDetails extends StatelessWidget {
                                         backgroundImage:
                                             NetworkImage(cast['imageUrl']),
                                       ),
-                                      SizedBox(height: 4),
+                                    const   SizedBox(height: 4),
                                       Text(
                                         cast['actorName'],
-                                        style: TextStyle(color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
                                       ),
                                     ],
                                   ),
@@ -161,12 +161,12 @@ class MovieDetails extends StatelessWidget {
                     );
                   }));
                 },
-                child: Text('Book Now'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: MyColor().darkblue,
                   backgroundColor: MyColor().primarycolor,
                   minimumSize: const Size(double.infinity, 50),
                 ),
+                child: const Text('Book Now'),
               ),
             ),
           ],

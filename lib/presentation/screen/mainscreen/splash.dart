@@ -30,7 +30,7 @@ class Splash extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                   height: 200,
                   width: 200,
                   child: Image.asset('asset/movietix_logo.png'))

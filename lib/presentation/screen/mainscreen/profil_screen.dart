@@ -8,14 +8,14 @@ import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/login/login_screen.dart';
 import 'package:movie/presentation/screen/login/profile_details.dart';
 import 'package:movie/presentation/widgets/icon_text_row.dart';
-import 'package:movie/presentation/widgets/show_bottomsheet.dart';
+
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     final User? currentUser = FirebaseAuth.instance.currentUser;

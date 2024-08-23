@@ -14,16 +14,15 @@ class ShowingSeat extends StatelessWidget {
   final dynamic movieName;
 
   const ShowingSeat({
-    Key? key,
+    super.key,
     required this.movieId,
     required this.screenId,
     required this.ownerId,
     required this.selectedDate,
     required this.selectedTime,
     required this.movieName,
-  }) : super(key: key);
-
-  @override
+  });
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColor().darkblue,
@@ -35,24 +34,25 @@ class ShowingSeat extends StatelessWidget {
         future: _loadScreenData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData) {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
 
           final screenData = snapshot.data!;
           return _SeatSelectionContent(
-            moviename: movieName,
+            movieName: movieName,
             screenData: screenData,
             movieId: movieId,
             screenId: screenId,
             ownerId: ownerId,
             selectedDate: selectedDate,
             selectedTime: selectedTime,
+            theaterName: screenData['theaterName'] ?? 'Unknown Theater',  // Add this line
           );
         },
       ),
@@ -61,6 +61,11 @@ class ShowingSeat extends StatelessWidget {
 
   Future<Map<String, dynamic>> _loadScreenData() async {
     try {
+      final ownerDoc = await FirebaseFirestore.instance
+          .collection('owners')
+          .doc(ownerId)
+          .get();
+
       final screenDoc = await FirebaseFirestore.instance
           .collection('owners')
           .doc(ownerId)
@@ -92,11 +97,10 @@ class ShowingSeat extends StatelessWidget {
         await showingDoc.reference.set(showingData);
       }
 
-      print('Loaded seat states: ${showingData['seatStates']}');
-
       return {
         ...screenConfig,
         'seatStates': showingData['seatStates'],
+        'theaterName': ownerDoc['name'] ?? 'Unknown Theater',  // Add this line
       };
     } catch (e) {
       print('Error loading screen data: $e');
@@ -120,18 +124,20 @@ class _SeatSelectionContent extends StatefulWidget {
   final String screenId;
   final String ownerId;
   final DateTime selectedDate;
-  final dynamic moviename;
   final String selectedTime;
+  final String movieName;
+  final String theaterName;  // Add this line
 
   const _SeatSelectionContent({
-    Key? key,
     required this.screenData,
     required this.movieId,
     required this.screenId,
     required this.ownerId,
     required this.selectedDate,
-    required this.selectedTime, this.moviename,
-  }) : super(key: key);
+    required this.selectedTime,
+    required this.movieName,
+    required this.theaterName,  // Add this line
+  });
 
   @override
   _SeatSelectionContentState createState() => _SeatSelectionContentState();
@@ -171,7 +177,7 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
 
   Widget _buildLegend() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       color: MyColor().darkblue,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,29 +202,29 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(label, style: TextStyle(color: Colors.white)),
+        Text(label, style: const TextStyle(color: Colors.white)),
       ],
     );
   }
 
   Widget _buildBottomBar() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       color: MyColor().primarycolor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             '${selectedSeats.length} seats selected',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: const TextStyle(color: Colors.white, fontSize: 18),
           ),
           ElevatedButton(
             onPressed: selectedSeats.isNotEmpty ? _proceedToBooking : null,
-            child: Text('Proceed to Booking'),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
             ),
+            child: const Text('Proceed to Booking'),
           ),
         ],
       ),
@@ -226,7 +232,7 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
   }
 
   void _proceedToBooking() {
-    final int seatPrice = 100;
+    const int seatPrice = 100;
     final int totalAmount =
         selectedSeats.length * seatPrice * 100; // Total in paise
 
@@ -252,20 +258,21 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
     // Handle payment error
   }
 
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
-    await _updateSoldSeats();
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return TicketScreen(
-        movieName: widget.moviename, // Replace with actual movie name
-        theaterName: " Your Theater Name",
-        numberOfSeats: selectedSeats.length,
-        seatNumbers: _generateSeatNumbers(),
-        date: widget.selectedDate,
-        time: widget.selectedTime,
-      );
-    }));
-    print(response);
-  }
+void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+  await _updateSoldSeats();
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    return TicketScreen(
+      movieName: widget.movieName,
+      theaterName: widget.theaterName,
+      numberOfSeats: selectedSeats.length,
+      seatNumbers: _generateSeatNumbers(),
+      date: widget.selectedDate,
+      time: widget.selectedTime,
+      screenName: widget.screenId,  // Use screenId as the screen name
+    );
+  }));
+  print(response);
+}
 
   List<String> _generateSeatNumbers() {
     return selectedSeats.map((index) {
@@ -278,7 +285,6 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
 
   void handleExternalWalletSelected(ExternalWalletResponse response) {
     print(response);
-    // Handle external wallet selection
   }
 
   Future<void> _updateSoldSeats() async {
@@ -315,6 +321,6 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
           showingRef, {'seatStates': seatStates}, SetOptions(merge: true));
     });
 
-    print('Seats updated: ${selectedSeats.toString()}');
+    
   }
 }

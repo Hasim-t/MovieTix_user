@@ -8,7 +8,7 @@ class TheaterSeatLayout extends StatelessWidget {
   final Function(int, int) onSeatTap;
   final List<int> selectedSeats;
 
-  TheaterSeatLayout({
+ const  TheaterSeatLayout({super.key,
     required this.screenData,
     required this.screenId,
     required this.onSeatTap,
@@ -30,13 +30,13 @@ class TheaterSeatLayout extends StatelessWidget {
 
     return InteractiveViewer(
       constrained: false,
-      boundaryMargin: EdgeInsets.all(20),
+      boundaryMargin: const EdgeInsets.all(20),
       minScale: 0.5,
       maxScale: 2.0,
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(rows, (rowIndex) {
@@ -48,8 +48,8 @@ class TheaterSeatLayout extends StatelessWidget {
                           width: 20,
                           child: Text(
                             String.fromCharCode(65 + rowIndex),
-                            style: TextStyle(
-                                color: Colors.white,
+                            style:  TextStyle(
+                                color: MyColor().white,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -104,7 +104,7 @@ class TheaterSeatLayout extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Image.asset(
               'asset/theaterscreenpng.png',
               height: 300,
@@ -123,8 +123,8 @@ class SeatSpace extends StatelessWidget {
   final int rowIndex;
   final int colIndex;
   final bool isSelected;
-
-  SeatSpace({
+ 
+  const SeatSpace({super.key, 
     required this.isVisible,
     required this.state,
     required this.rowIndex,
@@ -137,7 +137,7 @@ class SeatSpace extends StatelessWidget {
     return Container(
       width: 30,
       height: 30,
-      margin: EdgeInsets.all(2),
+      margin: const EdgeInsets.all(2),
       child: isVisible
           ? SeatWidget(
               state: state,
@@ -156,7 +156,7 @@ class SeatWidget extends StatelessWidget {
   final int colIndex;
   final bool isSelected;
 
-  SeatWidget({
+  const SeatWidget({super.key, 
     required this.state,
     required this.rowIndex,
     required this.colIndex,
@@ -173,9 +173,9 @@ class SeatWidget extends StatelessWidget {
       child: Center(
         child: Text(
           '${String.fromCharCode(65 + rowIndex)}${colIndex + 1}',
-          style: TextStyle(
+          style:  TextStyle(
             fontSize: 10,
-            color: Colors.white,
+            color:MyColor().white,
           ),
         ),
       ),

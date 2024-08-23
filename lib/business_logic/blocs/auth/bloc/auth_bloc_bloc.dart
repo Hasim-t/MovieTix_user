@@ -15,7 +15,7 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     on<CheckLoginStatusEvent>((event, emit) async {
       User? user;
       try {
-        await Future.delayed(Duration(seconds: 3), () {
+        await Future.delayed(const Duration(seconds: 3), () {
           user = _auth.currentUser;
         });
         if (user != null) {

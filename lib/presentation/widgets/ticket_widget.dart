@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie/presentation/constants/color.dart';
-import 'package:movie/presentation/screen/mainscreen/home_screen.dart';
+
 import 'package:movie/presentation/widgets/bottomnavigation.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -15,7 +15,7 @@ class TicketData extends StatelessWidget {
   final DateTime date;
   final String time;
 
-  const TicketData({
+  const TicketData({super.key, 
     required this.movieName,
     required this.theaterName,
     required this.screenName,
@@ -30,37 +30,37 @@ class TicketData extends StatelessWidget {
     return Scaffold(
       backgroundColor: MyColor().white,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
+          const   Center(
               child: Text(
                 'MovieTix Ticket',
                 style: TextStyle(fontFamily: 'Cabin', fontSize: 28),
               ),
             ),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             Center(
               child: Text(
                 movieName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('Theater Name:', theaterName),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('No. of Seats:', numberOfSeats.toString()),
-            SizedBox(height: 10),
+          const   SizedBox(height: 10),
             buildInfoRow('Seat Numbers:', seatNumbers.join(', ')),
-            SizedBox(height: 10),
+           const  SizedBox(height: 10),
             buildInfoRow('Date:', '${date.day}/${date.month}/${date.year}'),
-            SizedBox(height: 10),
+          const  SizedBox(height: 10),
             buildInfoRow('Time:', time),
-            SizedBox(height: 10),
+          const  SizedBox(height: 10),
             buildInfoRow('Screens:', screenName),
             Center(
-              child: Container(
+              child: SizedBox(
                 height: 150,
                 width: 150,
                 child: QrImageView(
@@ -70,10 +70,10 @@ class TicketData extends StatelessWidget {
                 ),
               ),
             ),
-            Center(
+            const Center(
               child: Text('Scan the QR code'),
             ),
-            SizedBox(height: 2),
+          const  SizedBox(height: 2),
             Center(
               child: ElevatedButton(
                 onPressed: () async {
@@ -102,12 +102,6 @@ class TicketData extends StatelessWidget {
                     }));
                   } else {}
                 },
-                child:  Text(
-                  'Done',
-                  style: TextStyle(
-                    color: MyColor().darkblue,
-                  ),
-                ),
                 style: ButtonStyle(
                   backgroundColor:
                       WidgetStateProperty.all(MyColor().primarycolor),
@@ -116,6 +110,12 @@ class TicketData extends StatelessWidget {
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                  ),
+                ),
+                child:  Text(
+                  'Done',
+                  style: TextStyle(
+                    color: MyColor().darkblue,
                   ),
                 ),
               ),

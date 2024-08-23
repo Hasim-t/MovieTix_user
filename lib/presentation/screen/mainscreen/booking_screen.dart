@@ -46,6 +46,7 @@ class _BookingScreenState extends State<BookingScreen>
     return Scaffold(
       backgroundColor: MyColor().darkblue,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: MyColor().primarycolor,
         title: const Text("Your Bookings"),
         centerTitle: true,

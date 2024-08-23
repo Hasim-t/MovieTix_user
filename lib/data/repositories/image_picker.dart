@@ -10,20 +10,20 @@ void showImageSourceDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text("Choose image source"),
+        title: const Text("Choose image source"),
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
               GestureDetector(
-                child: Text("Camera"),
+                child: const Text("Camera"),
                 onTap: () {
                   getImage(ImageSource.camera);
                   Navigator.of(context).pop();
                 },
               ),
-              Padding(padding: EdgeInsets.all(8.0)),
+              const Padding(padding: EdgeInsets.all(8.0)),
               GestureDetector(
-                child: Text("Gallery"),
+                child: const Text("Gallery"),
                 onTap: () {
                   getImage(ImageSource.gallery);
                   Navigator.of(context).pop();

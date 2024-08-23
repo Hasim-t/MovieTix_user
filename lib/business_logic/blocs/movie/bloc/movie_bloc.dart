@@ -12,7 +12,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final FirebaseFirestore _firestore;
   Timer? _carouselTimer;
 
-  MovieBloc(this._firestore) : super(MovieState()) {
+  MovieBloc(this._firestore) : super(const MovieState()) {
     on<FetchMovies>(_onFetchMovies);
     on<UpdateCarouselPage>(_onUpdateCarouselPage);
   }

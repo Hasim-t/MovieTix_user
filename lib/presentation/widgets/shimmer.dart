@@ -9,7 +9,7 @@ Widget buildCarouselShimmer() {
   return Shimmer.fromColors(
     baseColor: MyColor().shimmerBaseColor,
     highlightColor: MyColor().shimmerHighlightColor,
-    child: Container(
+    child:  SizedBox(
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -17,7 +17,7 @@ Widget buildCarouselShimmer() {
         itemBuilder: (context, index) {
           return Container(
             width: 300,
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            margin:const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               color: MyColor().shimmerBaseColor,
               borderRadius: BorderRadius.circular(10),
@@ -31,14 +31,14 @@ Widget buildCarouselShimmer() {
                     decoration: BoxDecoration(
                       color: MyColor().shimmerBaseColor,
                       borderRadius:
-                         BorderRadius.vertical(top: Radius.circular(10)),
+                    const      BorderRadius.vertical(top: Radius.circular(10)),
                     ),
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -47,7 +47,7 @@ Widget buildCarouselShimmer() {
                           height: 15,
                           color: MyColor().shimmerBaseColor,
                         ),
-                        SizedBox(height: 5),
+                       const  SizedBox(height: 5),
                         Container(
                           width: 100,
                           height: 10,
@@ -155,12 +155,12 @@ Widget buildMovieCardShimmer() {
       return MoviesDeatail(movie: movie);
                 }));
               },
-              child:  Text('Book'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: MyColor().darkblue,
-                minimumSize: Size(double.infinity, 36),
+                minimumSize: const Size(double.infinity, 36),
               ),
+              child: const  Text('Book'),
             ),
           ),
         ],

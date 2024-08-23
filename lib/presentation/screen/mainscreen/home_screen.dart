@@ -12,7 +12,7 @@ class Homescreen extends StatefulWidget {
 }
 class _HomescreenState extends State<Homescreen> {
   bool _isSearching = false;
-  TextEditingController _searchController = TextEditingController();
+ final  TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
@@ -25,11 +25,11 @@ class _HomescreenState extends State<Homescreen> {
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search movies...',
                   border: InputBorder.none,
                 ),
-                style: TextStyle(fontFamily: 'Cabin', fontSize: 22),
+                style: const TextStyle(fontFamily: 'Cabin', fontSize: 22),
                 onChanged: (query) {
                   setState(() {
                     _searchQuery = query;
@@ -43,10 +43,10 @@ class _HomescreenState extends State<Homescreen> {
                     height: 70,
                     width: 70,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
-                  Text(
+                 const  Text(
                     'Movies',
                     style: TextStyle(fontFamily: 'Cabin', fontSize: 22),
                   ),
@@ -152,7 +152,7 @@ class _HomescreenState extends State<Homescreen> {
                               final movie = state.malayalamMovies[index];
                               final data = movie.data() as Map<String, dynamic>;
                               return Container(
-                                margin: EdgeInsets.all(10),
+                                margin: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
@@ -167,7 +167,7 @@ class _HomescreenState extends State<Homescreen> {
                                       left: 0,
                                       right: 0,
                                       child: Container(
-                                        padding:  EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             begin: Alignment.bottomCenter,
@@ -180,7 +180,7 @@ class _HomescreenState extends State<Homescreen> {
                                         ),
                                         child: Text(
                                           data['name'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold),
@@ -216,7 +216,7 @@ class _HomescreenState extends State<Homescreen> {
               ],
             );
           }
-          return Center(child: Text('No movies available.'));
+          return const Center(child: Text('No movies available.'));
         },
       ),
     );
