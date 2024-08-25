@@ -76,31 +76,51 @@ class TicketData extends StatelessWidget {
           const  SizedBox(height: 2),
             Center(
               child: ElevatedButton(
-                onPressed: () async {
-                  final User? currentUser = FirebaseAuth.instance.currentUser;
+               onPressed: () async {
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
-                  if (currentUser != null) {
-                    CollectionReference ticketsRef = FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(currentUser.uid)
-                        .collection('tickets');
+  if (currentUser != null) {
+    CollectionReference ticketsRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('tickets');
 
-                    await ticketsRef.add({
-                      'movieName': movieName,
-                      'theaterName': theaterName,
-                      'screenName': screenName,
-                      'numberOfSeats': numberOfSeats,
-                      'seatNumbers': seatNumbers,
-                      'date': date,
-                      'time': time,
-                      'createdAt': FieldValue.serverTimestamp(),
-                    });
+    CollectionReference revenueRef = FirebaseFirestore.instance.collection('revenue');
 
-                    Navigator.of(context)
-                        .pushReplacement(MaterialPageRoute(builder: (context) {
-                      return Bottomnavigation();
-                    }));
-                  } else {}
+    // Calculate revenue
+    int revenue = numberOfSeats * 100;
+
+    // Save ticket data
+    await ticketsRef.add({
+      'movieName': movieName,
+      'theaterName': theaterName,
+      'screenName': screenName,
+      'numberOfSeats': numberOfSeats,
+      'seatNumbers': seatNumbers,
+      'date': date,
+      'time': time,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // Save revenue data
+    await revenueRef.add({
+      'movieName': movieName,
+      'theaterName': theaterName,
+      'screenName': screenName,
+      'numberOfSeats': numberOfSeats,
+      'revenue': revenue,
+      'date': date,
+      'time': time,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) {
+      return Bottomnavigation();
+    }));
+  } else {
+    
+  }
                 },
                 style: ButtonStyle(
                   backgroundColor:
