@@ -7,14 +7,18 @@ import 'package:movie/data/repositories/image_picker.dart';
 import 'package:movie/presentation/constants/color.dart';
 import 'package:movie/presentation/screen/login/login_screen.dart';
 import 'package:movie/presentation/screen/login/profile_details.dart';
+import 'package:movie/presentation/screen/settings/privacy_policy.dart';
+import 'package:movie/presentation/screen/settings/terms_and_conditions.dart';
 import 'package:movie/presentation/widgets/icon_text_row.dart';
-
+import 'package:share_plus/share_plus.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    
     // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -32,6 +36,7 @@ class ProfilScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: MyColor().darkblue,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: MyColor().darkblue,
           title: Text('Profile',
@@ -51,13 +56,19 @@ class ProfilScreen extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator(color: MyColor().primarycolor));
+                  return Center(
+                      child: CircularProgressIndicator(
+                          color: MyColor().primarycolor));
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: MyColor().red)));
+                  return Center(
+                      child: Text('Error: ${snapshot.error}',
+                          style: TextStyle(color: MyColor().red)));
                 }
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Center(child: Text('No user data found', style: TextStyle(color: MyColor().primarycolor)));
+                  return Center(
+                      child: Text('No user data found',
+                          style: TextStyle(color: MyColor().primarycolor)));
                 }
 
                 var userData = snapshot.data!.data() as Map<String, dynamic>;
@@ -74,13 +85,14 @@ class ProfilScreen extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MyProfile()));
+                                  builder: (context) => const MyProfile()));
                             },
                             child: CircleAvatar(
                               radius: screenHeight * 0.1,
                               backgroundImage: profileImageUrl != null
                                   ? NetworkImage(profileImageUrl)
-                                  : AssetImage('asset/avatar png.png') as ImageProvider,
+                                  : const AssetImage('asset/avatar png.png')
+                                      as ImageProvider,
                             ),
                           ),
                           Positioned(
@@ -92,7 +104,8 @@ class ProfilScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: IconButton(
-                                icon: Icon(Icons.edit, color: MyColor().darkblue),
+                                icon:
+                                    Icon(Icons.edit, color: MyColor().darkblue),
                                 onPressed: () {
                                   showImageSourceDialog(context);
                                 },
@@ -126,23 +139,36 @@ class ProfilScreen extends StatelessWidget {
                     CoustomRowIcontext(
                       icon: Icons.privacy_tip,
                       text: 'Privacy',
-                      ontap: () {},
+                      ontap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return const PrivacyPolicy();
+                        }));
+                      },
                     ),
                     CoustomRowIcontext(
                       icon: Icons.description,
                       text: 'Terms and conditions',
-                      ontap: () {},
+                      ontap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return const TermsAndConditions();
+                        }));
+                      },
                     ),
+                    // CoustomRowIcontext(
+                    //   icon: Icons.dark_mode,
+                    //   text: 'Dark Mode',
+                    //   ontap: () {},
+                    // ),
                     CoustomRowIcontext(
-                      icon: Icons.dark_mode,
-                      text: 'Dark Mode',
-                      ontap: () {},
-                    ),
-                    CoustomRowIcontext(
-                      icon: Icons.share,
-                      text: 'Share',
-                      ontap: () {},
-                    ),
+  icon: Icons.share,
+  text: 'Share',
+  ontap: () {
+    const String appUrl = 'https://www.amazon.com/dp/B0DGD9VNSL/ref=apps_sf_sta';
+    Share.share('Check out this amazing app: $appUrl', subject: 'Movietix App');
+  },
+),
                     CoustomRowIcontext(
                       icon: Icons.logout,
                       text: 'Logout',
@@ -152,7 +178,9 @@ class ProfilScreen extends StatelessWidget {
                         if (user != null) {
                           for (UserInfo userInfo in user.providerData) {
                             if (userInfo.providerId == 'google.com') {
-                              context.read<AuthBlocBloc>().add(GoogleLogoutEvent());
+                              context
+                                  .read<AuthBlocBloc>()
+                                  .add(GoogleLogoutEvent());
                               return;
                             }
                           }
@@ -160,7 +188,6 @@ class ProfilScreen extends StatelessWidget {
                         }
                       },
                     ),
-                 
                   ],
                 );
               },
@@ -170,4 +197,6 @@ class ProfilScreen extends StatelessWidget {
       ),
     );
   }
+  
+  
 }

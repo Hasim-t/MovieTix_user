@@ -12,7 +12,7 @@ class Bottomnavigation extends StatelessWidget {
   Bottomnavigation({super.key});
 
   final List<Widget> pages = [
-    const Homescreen(),
+     Homescreen(),
    const TheaterScreen(),
    const UpcomingScreen(),
     const  BookingScreen(),

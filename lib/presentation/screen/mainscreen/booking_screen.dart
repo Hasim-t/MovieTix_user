@@ -8,7 +8,7 @@ import 'package:movie/presentation/screen/bookingscreen/view_ticket.dart';
 
 
 class BookingScreen extends StatelessWidget {
-  const BookingScreen({Key? key}) : super(key: key);
+  const BookingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +93,11 @@ class TicketCard extends StatelessWidget {
   final String time;
 
   const TicketCard({
-    Key? key,
+    super.key,
     required this.movieName,
     required this.date,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

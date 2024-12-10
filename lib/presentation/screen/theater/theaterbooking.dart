@@ -23,7 +23,7 @@ class TheaterMovieshowing extends StatelessWidget {
         elevation: 0,
         title: Text(
           theaterName,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'Cabin',
             color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
@@ -66,7 +66,7 @@ class TheaterMovieshowing extends StatelessWidget {
 
   Widget _buildMovieList(String screenId) {
     final now = DateTime.now();
-    final nowDateOnly = DateTime(now.year, now.month, now.day); // Current date with time set to midnight
+    final nowDateOnly = DateTime(now.year, now.month, now.day); 
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -78,13 +78,13 @@ class TheaterMovieshowing extends StatelessWidget {
           .snapshots(),
       builder: (context, moviesSnapshot) {
         if (moviesSnapshot.connectionState == ConnectionState.waiting) {
-          return Center(child:  CircularProgressIndicator());
+          return const Center(child:  CircularProgressIndicator());
         }
         if (moviesSnapshot.hasError) {
           return Center(child: Text("Error: ${moviesSnapshot.error}"));
         }
         if (!moviesSnapshot.hasData || moviesSnapshot.data!.docs.isEmpty) {
-          return Center(child: Text("No movies found for this screen", style: TextStyle(color: Colors.white)));
+          return const Center(child: Text("No movies found for this screen", style: TextStyle(color: Colors.white)));
         }
 
         final futureMovies = moviesSnapshot.data!.docs.where((movieSchedule) {
@@ -103,7 +103,7 @@ class TheaterMovieshowing extends StatelessWidget {
         }).toList();
 
         if (futureMovies.isEmpty) {
-          return Center(child: Text("", style: TextStyle(color: Colors.white)));
+          return const Center(child: Text("", style: TextStyle(color: Colors.white)));
         }
 
         return Column(
@@ -113,7 +113,7 @@ class TheaterMovieshowing extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Text(
                 "Screen $screenId",
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
@@ -129,7 +129,7 @@ class TheaterMovieshowing extends StatelessWidget {
                 future: FirebaseFirestore.instance.collection('movies').doc(movieId).get(),
                 builder: (context, movieSnapshot) {
                   if (movieSnapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   var movieData = movieSnapshot.data?.data() as Map<String, dynamic>?;
@@ -158,14 +158,14 @@ class TheaterMovieshowing extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   movieName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -173,12 +173,12 @@ class TheaterMovieshowing extends StatelessWidget {
                                 ),
                                 Text(
                                   language,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 16,
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
@@ -192,7 +192,7 @@ class TheaterMovieshowing extends StatelessWidget {
                                         children: [
                                           Text(
                                             DateFormat('yyyy-MM-dd').format(date),
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16,
                                             ),
@@ -232,7 +232,7 @@ class TheaterMovieshowing extends StatelessWidget {
                   );
                 },
               );
-            }).toList(),
+            }),
           ],
         );
       },
@@ -258,11 +258,11 @@ class TheaterMovieshowing extends StatelessWidget {
       child: Chip(
         label: Text(
           time,
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
         backgroundColor: MyColor().primarycolor,
         elevation: 3,
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),

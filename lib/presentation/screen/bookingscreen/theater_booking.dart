@@ -137,7 +137,7 @@ class TheaterBookingView extends StatelessWidget {
                           DateFormat('dd').format(date),
                           style: TextStyle(
                             color:
-                                isSelected ? MyColor().primarycolor :MyColor().primarycolor,
+                                isSelected ? MyColor().white :MyColor().primarycolor,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -213,7 +213,7 @@ class TheaterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color(0xFF134656),
+      color: const Color(0xFF134656),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),

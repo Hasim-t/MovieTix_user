@@ -15,7 +15,8 @@ class TicketData extends StatelessWidget {
   final DateTime date;
   final String time;
 
-  const TicketData({super.key, 
+  const TicketData({
+    super.key,
     required this.movieName,
     required this.theaterName,
     required this.screenName,
@@ -34,30 +35,31 @@ class TicketData extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          const   Center(
+            const Center(
               child: Text(
                 'MovieTix Ticket',
                 style: TextStyle(fontFamily: 'Cabin', fontSize: 28),
               ),
             ),
-           const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             Center(
               child: Text(
                 movieName,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-           const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Theater Name:', theaterName),
-           const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('No. of Seats:', numberOfSeats.toString()),
-          const   SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Seat Numbers:', seatNumbers.join(', ')),
-           const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Date:', '${date.day}/${date.month}/${date.year}'),
-          const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Time:', time),
-          const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildInfoRow('Screens:', screenName),
             Center(
               child: SizedBox(
@@ -73,54 +75,53 @@ class TicketData extends StatelessWidget {
             const Center(
               child: Text('Scan the QR code'),
             ),
-          const  SizedBox(height: 2),
+            const SizedBox(height: 2),
             Center(
               child: ElevatedButton(
-               onPressed: () async {
-  final User? currentUser = FirebaseAuth.instance.currentUser;
+                onPressed: () async {
+                  final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  if (currentUser != null) {
-    CollectionReference ticketsRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.uid)
-        .collection('tickets');
+                  if (currentUser != null) {
+                    CollectionReference ticketsRef = FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(currentUser.uid)
+                        .collection('tickets');
 
-    CollectionReference revenueRef = FirebaseFirestore.instance.collection('revenue');
+                    CollectionReference revenueRef =
+                        FirebaseFirestore.instance.collection('revenue');
 
-    // Calculate revenue
-    int revenue = numberOfSeats * 100;
+                    // Calculate revenue
+                    int revenue = numberOfSeats * 100;
 
-    // Save ticket data
-    await ticketsRef.add({
-      'movieName': movieName,
-      'theaterName': theaterName,
-      'screenName': screenName,
-      'numberOfSeats': numberOfSeats,
-      'seatNumbers': seatNumbers,
-      'date': date,
-      'time': time,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+                    // Save ticket data
+                    await ticketsRef.add({
+                      'movieName': movieName,
+                      'theaterName': theaterName,
+                      'screenName': screenName,
+                      'numberOfSeats': numberOfSeats,
+                      'seatNumbers': seatNumbers,
+                      'date': date,
+                      'time': time,
+                      'createdAt': FieldValue.serverTimestamp(),
+                    });
 
-    // Save revenue data
-    await revenueRef.add({
-      'movieName': movieName,
-      'theaterName': theaterName,
-      'screenName': screenName,
-      'numberOfSeats': numberOfSeats,
-      'revenue': revenue,
-      'date': date,
-      'time': time,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+                    // Save revenue data
+                    await revenueRef.add({
+                      'movieName': movieName,
+                      'theaterName': theaterName,
+                      'screenName': screenName,
+                      'numberOfSeats': numberOfSeats,
+                      'revenue': revenue,
+                      'date': date,
+                      'time': time,
+                      'createdAt': FieldValue.serverTimestamp(),
+                    });
 
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) {
-      return Bottomnavigation();
-    }));
-  } else {
-    
-  }
+                    Navigator.of(context)
+                        .pushReplacement(MaterialPageRoute(builder: (context) {
+                      return Bottomnavigation();
+                    }));
+                  } else {}
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -132,7 +133,7 @@ class TicketData extends StatelessWidget {
                     ),
                   ),
                 ),
-                child:  Text(
+                child: Text(
                   'Done',
                   style: TextStyle(
                     color: MyColor().darkblue,

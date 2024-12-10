@@ -255,7 +255,7 @@ class _SeatSelectionContentState extends State<_SeatSelectionContent> {
 
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
     print(response);
-    // Handle payment error
+  
   }
 
 void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
@@ -268,7 +268,7 @@ void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
       seatNumbers: _generateSeatNumbers(),
       date: widget.selectedDate,
       time: widget.selectedTime,
-      screenName: widget.screenId,  // Use screenId as the screen name
+      screenName: widget.screenId,
     );
   }));
   print(response);

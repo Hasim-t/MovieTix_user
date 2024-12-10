@@ -12,6 +12,7 @@ class TheaterScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: MyColor().darkblue,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: MyColor().primarycolor,
         title: const Text(
           "All Theaters",
@@ -19,9 +20,9 @@ class TheaterScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
-              // Implement search functionality
+             
             },
           ),
         ],
@@ -30,23 +31,23 @@ class TheaterScreen extends StatelessWidget {
         stream: FirebaseFirestore.instance.collection('owners').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No theaters found"));
+            return const Center(child: Text("No theaters found"));
           }
 
           return ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var theaterDoc = snapshot.data!.docs[index];
               var theaterData = theaterDoc.data() as Map<String, dynamic>;
               var theaterName = theaterData['name'] ?? 'Unnamed Theater';
-              var theaterLocation = theaterData['location'] ?? 'Location not specified';
+             
               var imageUrl = theaterData['profileImageUrl'] as String?;
 
               return GestureDetector(
@@ -62,7 +63,7 @@ class TheaterScreen extends StatelessWidget {
                   );
                 },
                 child: Card(
-                  margin: EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -79,7 +80,7 @@ class TheaterScreen extends StatelessWidget {
                                 return Container(
                                   height: 200,
                                   color: Colors.grey,
-                                  child: Center(child: Icon(Icons.error)),
+                                  child: const Center(child: Icon(Icons.error)),
                                 );
                               },
                             )
@@ -110,23 +111,23 @@ class TheaterScreen extends StatelessWidget {
                             children: [
                               Text(
                                 theaterName,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.location_on, color: Colors.white, size: 16),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    theaterLocation,
-                                    style: TextStyle(color: Colors.white, fontSize: 14),
-                                  ),
-                                ],
-                              ),
+                              const SizedBox(height: 4),
+                              // Row(
+                              //   children: [
+                              //     Icon(Icons.location_on, color: Colors.white, size: 16),
+                              //     SizedBox(width: 4),
+                              //     Text(
+                              //      '',
+                              //       style: TextStyle(color: Colors.white, fontSize: 14),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),

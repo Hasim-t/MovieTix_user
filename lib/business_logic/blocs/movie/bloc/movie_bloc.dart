@@ -15,6 +15,10 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
   MovieBloc(this._firestore) : super(const MovieState()) {
     on<FetchMovies>(_onFetchMovies);
     on<UpdateCarouselPage>(_onUpdateCarouselPage);
+    on<SearchMovies>(_onSearchMovies);
+    on<FilterMovies>(_onFilterMovies);
+     on<ToggleSearch>(_onToggleSearch);
+    on<ClearSearch>(_onClearSearch);
   }
 
   Future<void> _onFetchMovies(FetchMovies event, Emitter<MovieState> emit) async {
@@ -23,7 +27,7 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
       final snapshots = await _firestore.collection('movies').get();
       final allMovies = snapshots.docs;
       final malayalamMovies = allMovies.where((movie) => 
-        (movie.data() as Map<String, dynamic>)['language'] == 'Malayalam'
+        (movie.data())['language'] == 'Malayalam'
       ).toList();
       
       emit(state.copyWith(
@@ -43,11 +47,44 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
 
   void _startCarouselTimer() {
     _carouselTimer?.cancel();
-    _carouselTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      final nextPage = (state.currentCarouselPage + 1) % (state.malayalamMovies.length > 3 ? 3 : state.malayalamMovies.length);
+    _carouselTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      final nextPage = (state.currentCarouselPage + 1 ) % (state.malayalamMovies.length > 3 ? 3 : state.malayalamMovies.length);
       add(UpdateCarouselPage(nextPage));
     });
   }
+
+   void _onSearchMovies(SearchMovies event, Emitter<MovieState> emit) {
+  emit(state.copyWith(searchQuery: event.query));
+}
+
+  void _onFilterMovies(FilterMovies event, Emitter<MovieState> emit) {
+    emit(state.copyWith(selectedLanguage: event.language));
+  }
+void _onToggleSearch(ToggleSearch event, Emitter<MovieState> emit) {
+  emit(state.copyWith(
+    isSearching: !state.isSearching,
+    searchQuery: state.isSearching ? '' : state.searchQuery
+  ));
+}
+
+  void _onClearSearch(ClearSearch event, Emitter<MovieState> emit) {
+    emit(state.copyWith(searchQuery: '', isSearching: false));
+  }
+
+List<DocumentSnapshot> get filteredMovies {
+  return state.movies.where((movie) {
+    final data = movie.data() as Map<String, dynamic>;
+    final name = data['name'].toString().toLowerCase();
+    final language = data['language'].toString();
+    
+    bool matchesSearch = state.searchQuery.isEmpty || 
+                         name.contains(state.searchQuery.toLowerCase());
+    bool matchesLanguage = state.selectedLanguage == 'All' || 
+                           language == state.selectedLanguage;
+    
+    return matchesSearch && matchesLanguage;
+  }).toList();
+}
 
   @override
   Future<void> close() {
